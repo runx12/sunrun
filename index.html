@@ -380,7 +380,7 @@ body.light-mode .s-premier{border-color:rgba(122,88,0,.3);background:rgba(122,88
 
 /* ── GROUP HEADER ROWS ── */
 tr.group-header td{background:#2A2828;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan-light);padding:14px 18px;border-bottom:none;border-top:1px solid rgba(39,217,217,0.18)}
-body.light-mode tr.group-header td{background:#2A2828;color:#27d9d9;border-top-color:rgba(39,217,217,0.18)}
+body.light-mode tr.group-header td{background:rgba(0,0,0,0.06);color:var(--cyan-dark);border-top-color:var(--border)}
 .col-header td{background:var(--near-black);font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:clamp(9px,.85vw,11px);font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan-dark);padding:clamp(10px,1vw,16px) clamp(12px,1.1vw,18px);border-bottom:1px solid rgba(170,221,221,0.18);border-top:none;white-space:nowrap;cursor:pointer;user-select:none;transition:background .2s}
 .col-header td:hover{color:var(--cyan-light)}
 .col-header td span.sa{opacity:.4;margin-left:4px}
@@ -2384,6 +2384,11 @@ function applyBranding() {
       headerLogo.style.letterSpacing = 'normal';
       headerLogo.style.fontSize = 'inherit';
       headerLogo.style.textTransform = 'none';
+      headerLogo.style.display = 'flex';
+      headerLogo.style.alignItems = 'center';
+      headerLogo.querySelectorAll('path').forEach(p => p.setAttribute('fill', 'currentColor'));
+      const _svg = headerLogo.querySelector('svg');
+      if (_svg) { _svg.style.color = 'var(--off-white)'; }
     } else {
       headerLogo.textContent = brand.toLowerCase();
     }
