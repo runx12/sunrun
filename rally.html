@@ -5080,10 +5080,10 @@ async function rpFetchSheet(tabName) {
   const json = await res.json();
   const rows = json.values || [];
   if (rows.length < 2) return [];
-  const headers = rows[0].map(h => h.trim());
+  const headers = rows[0].map(h => String(h).trim());
   return rows.slice(1).map(row => {
     const obj = {};
-    headers.forEach((h, i) => { obj[h] = (row[i] || '').trim(); });
+    headers.forEach((h, i) => { const v = row[i]; obj[h] = (v === undefined || v === null) ? '' : String(v).trim(); });
     return obj;
   });
 }
@@ -6224,13 +6224,20 @@ function rpHideLoginScreen() {
 }
 function rpShowErrorScreen(msg) {
   console.error('Error:', msg);
-  /* Temporary debug — show error visibly on screen */
   const existing = document.getElementById('rp-debug-error');
   if (existing) existing.remove();
   const div = document.createElement('div');
   div.id = 'rp-debug-error';
-  div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#c0392b;color:#fff;padding:20px;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-all;';
-  div.textContent = 'LOAD ERROR:\n' + msg;
+  const isAdmin = RP._loginEmail && RP._loginEmail.toLowerCase() === 'adam.howle@sunrun.com';
+  if (isAdmin) {
+    /* Full technical error for admin */
+    div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#c0392b;color:#fff;padding:20px;font-family:monospace;font-size:13px;white-space:pre-wrap;word-break:break-all;';
+    div.textContent = 'LOAD ERROR:\n' + msg;
+  } else {
+    /* Friendly message for reps */
+    div.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#c0392b;color:#fff;padding:16px 20px;font-family:Helvetica Neue,sans-serif;font-size:14px;text-align:center;';
+    div.textContent = 'Unable to load your data. Please try signing in again.';
+  }
   document.body.appendChild(div);
 }
 
