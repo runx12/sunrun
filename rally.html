@@ -1383,30 +1383,11 @@ body {
 .pod-table-wrap {
   border-bottom: 1px solid var(--rp-border);
 }
-/* Squad QTD table — fit all columns without horizontal scroll */
-.pod-table { table-layout: fixed; }
-.pod-table th {
-  font-size: 8px;
-  padding: 9px 3px;
-  white-space: nowrap;
-  text-align: center;
-}
-.pod-table td {
-  font-size: 12px;
-  padding: 11px 3px;
-  text-align: center;
-  white-space: nowrap;
-}
-.pod-table .col-name {
-  width: 34%;
-  text-align: left;
-  padding-left: 14px;
-}
-.pod-table th.col-name { text-align: left; padding-left: 14px; }
+
 .pod-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 280px;
+  /* no min-width — must fit in viewport */
 }
 .pod-table thead tr {
   border-bottom: 1.5px solid var(--rp-border);
@@ -1415,24 +1396,24 @@ body {
 .pod-table th {
   font-size: 7px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--rp-muted);
-  padding: 8px 6px;
+  padding: 8px 3px;
   text-align: center;
   white-space: nowrap;
 }
 .pod-table th.col-name {
   text-align: left;
-  padding-left: 14px;
-  min-width: 110px;
+  padding-left: 10px;
+  /* no min-width */
 }
 .pod-table td {
-  padding: 0 6px;
-  height: 48px;
+  padding: 0 3px;
+  height: 46px;
   vertical-align: middle;
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--rp-ink);
   border-bottom: 1px solid var(--rp-border);
@@ -1440,8 +1421,8 @@ body {
 }
 .pod-table td.col-name {
   text-align: left;
-  padding-left: 14px;
-  font-size: 13px;
+  padding-left: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--rp-ink);
 }
@@ -2789,6 +2770,15 @@ function sqRenderWtd() {
 function sqRenderQtd() {
   const sorted = [...SQ_QTD].sort((a,b) => b.sraPts - a.sraPts || b.icPts - a.icPts);
   const tot = { totSra:0, totIc:0, sraPts:0, icPts:0 };
+  const RANK_ABBR = {
+    'Franchise':  'F',
+    'Premier':    'P',
+    'Level III':  'L3',
+    'Level II':   'L2',
+    'Level I':    'L1',
+    'In Combine': 'IC',
+    'No Status':  '',
+  };
   const tbody = document.getElementById('sq-qtd-tbody');
   tbody.innerHTML = sorted.map(r => {
     tot.totSra += r.totSra; tot.totIc += r.totIc;
@@ -2809,7 +2799,7 @@ function sqRenderQtd() {
     const z = v => v === 0 ? '<td class="val-zero">0</td>' : '<td>' + v + '</td>';
     return '<tr>' + nameCell
       + z(r.totSra) + z(r.totIc) + z(r.sraPts) + z(r.icPts)
-      + '<td class="td-rank ' + rc + '">' + r.rank + '</td></tr>';
+      + '<td class="td-rank ' + rc + '">' + (RANK_ABBR[r.rank] !== undefined ? RANK_ABBR[r.rank] : r.rank) + '</td></tr>';
   }).join('');
   document.getElementById('sq-qtd-tfoot').innerHTML =
     '<tr class="total-row"><td class="col-name">Total</td>'
@@ -4552,14 +4542,9 @@ function _rpGoogleSignIn() {
     }
   }
 
-  /* Attach to rp-scroll containers — passive:false on move to allow preventDefault */
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.rp-scroll').forEach(function(el) {
-      el.addEventListener('touchstart', onTouchStart, { passive: true });
-      el.addEventListener('touchmove',  onTouchMove,  { passive: false });
-      el.addEventListener('touchend',   onTouchEnd,   { passive: true });
-    });
-    /* Also attach to screen wraps themselves (nav bar, header area) */
+  /* Attach to every screen wrap — passive:false on touchmove lets us preventDefault
+     when we detect a horizontal swipe, blocking the vertical scroll on rp-scroll */
+  function attachSwipe() {
     ['me','pod','squad','office','region','status'].forEach(function(id) {
       var wrap = document.getElementById('screen-' + id);
       if (!wrap) return;
@@ -4567,7 +4552,9 @@ function _rpGoogleSignIn() {
       wrap.addEventListener('touchmove',  onTouchMove,  { passive: false });
       wrap.addEventListener('touchend',   onTouchEnd,   { passive: true });
     });
-  });
+  }
+  /* Run immediately — this script is at end of body so elements exist */
+  attachSwipe();
 })();
 </script>
 " style="flex:1;border:none;width:100%;height:100%;" title="Recruit Intake Form"></iframe>
