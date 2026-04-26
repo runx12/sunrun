@@ -1116,6 +1116,10 @@ body {
   background: var(--rp-steel);
   border-top: 1px solid var(--rp-border);
   padding: 7px 0 18px;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  flex-shrink: 0;
 }
 .ni {
   flex: 1;
@@ -1375,9 +1379,17 @@ body {
 
 /* Pod leaderboard table */
 .pod-table-wrap {
-  overflow-x: auto;
   border-bottom: 1px solid var(--rp-border);
 }
+/* Squad QTD table — fit all columns without horizontal scroll */
+.pod-table th,
+.pod-table td {
+  padding: 10px 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.pod-table th { font-size: 9px; }
+.pod-table .col-name { width: 38%; }
 .pod-table {
   width: 100%;
   border-collapse: collapse;
@@ -3210,9 +3222,15 @@ offRenderQtd();
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 10.5L12 3l9 7.5" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="10" width="18" height="11" rx="1" stroke="#888780" stroke-width="1.5"/><rect x="9.5" y="15" width="5" height="6" rx="0.5" stroke="#888780" stroke-width="1.3"/></svg>
         <div class="ni-lbl">Office</div><div class="ni-bar"></div>
       </div>
-      <div class="ni on" onclick="rpSwitch('status')">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
-        <div class="ni-lbl">Status</div><div class="ni-bar"></div>
+      <div class="ni" onclick="rpSwitch('status')">
+        <div class="ni-bar"></div>
+        <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M11 2l2.5 6.5H20l-5.5 4 2 6.5L11 15.5l-5.5 3.5 2-6.5L2 8.5h6.5z" stroke="#888780" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <span class="ni-lbl">Status</span>
+      </div>
+      <div class="ni on" onclick="rpNavigateToScreen('region')">
+        <div class="ni-bar" style="background:#49517D"></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#49517D" stroke-width="1.5"/><path d="M12 3c-2.5 3-4 5.5-4 9s1.5 6 4 9" stroke="#49517D" stroke-width="1.5" stroke-linecap="round"/><path d="M12 3c2.5 3 4 5.5 4 9s-1.5 6-4 9" stroke="#49517D" stroke-width="1.5" stroke-linecap="round"/><path d="M3 12h18" stroke="#49517D" stroke-width="1.5" stroke-linecap="round"/><path d="M4.5 7.5h15M4.5 16.5h15" stroke="#49517D" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="ni-lbl" style="color:#49517D">Region</span>
       </div>
     </div>
   </div>
