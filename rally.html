@@ -3848,6 +3848,7 @@ function rnkTogglePin(e) {
 
     <!-- Footer -->
     <div class="drw-footer">
+      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.6</div>
       <div class="drw-footer-item" onclick="drwOpen('help')">
         <div class="drw-item-icon">❓</div>
         <div class="drw-footer-label">Help &amp; Feedback</div>
@@ -4840,7 +4841,7 @@ function _rpGoogleSignIn() {
     </div>
     <div class="pref-card">
       <div class="pref-card-label">App Version</div>
-      <div style="font-size:12px;color:#888780;">Rally Point v2.0 · April 2026</div>
+      <div style="font-size:12px;color:#888780;">Rally Point v2.6 · April 2026</div>
     </div>
   </div>
   <div class="sub-screen-nav">
@@ -5789,12 +5790,14 @@ function rpRenderSquadQTD(squadInfo) {
     const rc = RANK_CLS[rank] || 'r-ns-txt';
     const z = v => v === 0 ? '<td class="val-zero">0</td>' : `<td>${v}</td>`;
 
-    return `<tr style="${rowStyle}">${td}${z(sra)}${z(ic)}${z(sraPts)}${z(icPts)}<td class="td-rank ${rc}">${rank}</td></tr>`;
+    const RANK_ABBR = {'Franchise':'F','Premier':'P','Level III':'L3','Level II':'L2','Level I':'L1','In Combine':'IC','No Status':''};
+    const rankAbbr = RANK_ABBR[rank] !== undefined ? RANK_ABBR[rank] : rank;
+    return `<tr style="${rowStyle}">${td}${z(sraPts)}${z(icPts)}<td class="td-rank ${rc}">${rankAbbr}</td></tr>`;
   }).join('');
 
   document.getElementById('sq-qtd-tfoot').innerHTML =
     `<tr class="total-row"><td class="col-name">Total</td>` +
-    [tot.sra,tot.ic,tot.sraPts.toFixed(1),tot.icPts.toFixed(1)].map(v=>`<td>${v}</td>`).join('') +
+    [tot.sraPts.toFixed(1),tot.icPts.toFixed(1)].map(v=>`<td>${v}</td>`).join('') +
     `<td>—</td></tr>`;
 }
 
@@ -6257,13 +6260,15 @@ function rpRenderPod() {
       const rc = RANK_CLS[rank] || 'r-ns-txt';
       const isMe = rep.id === me.id;
       const nameStyle = isMe ? `font-weight:700;color:var(--rp-pod);` : '';
+      const RANK_ABBR = {'Franchise':'F','Premier':'P','Level III':'L3','Level II':'L2','Level I':'L1','In Combine':'IC','No Status':''};
+      const rankAbbr = RANK_ABBR[rank] !== undefined ? RANK_ABBR[rank] : rank;
       return `<tr><td class="col-name"><span style="${nameStyle}">${rep.name}</span></td>` +
-        `${z(sra)}${z(ic)}${z(sraPts)}${z(icPts)}<td class="td-rank ${rc}">${rank}</td></tr>`;
+        `${z(sraPts)}${z(icPts)}<td class="td-rank ${rc}">${rankAbbr}</td></tr>`;
     }).join(''));
 
     setHTML('pod-qtd-tfoot',
       `<tr class="total-row"><td class="col-name">Total</td>` +
-      [totQ.sra, totQ.ic, totQ.sraPts.toFixed(1), totQ.icPts.toFixed(1)].map(v=>`<td>${v}</td>`).join('') +
+      [totQ.sraPts.toFixed(1), totQ.icPts.toFixed(1)].map(v=>`<td>${v}</td>`).join('') +
       `<td>—</td></tr>`);
 
   } else {
