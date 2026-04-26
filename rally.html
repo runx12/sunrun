@@ -5072,7 +5072,7 @@ function rpShowAuthError(msg) {
    SHEET FETCH UTILITY
    ═══════════════════════════════════════════════════════════════════ */
 async function rpFetchSheet(tabName) {
-  const url = `${RP_CONFIG.API_BASE}/${RP_CONFIG.SHEET_ID}/values/${encodeURIComponent(tabName)}?valueRenderOption=UNFORMATTED_VALUE`;
+  const url = `${RP_CONFIG.API_BASE}/${RP_CONFIG.SHEET_ID}/values/${encodeURIComponent(tabName)}`;
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${RP.token}` }
   });
@@ -5080,10 +5080,10 @@ async function rpFetchSheet(tabName) {
   const json = await res.json();
   const rows = json.values || [];
   if (rows.length < 2) return [];
-  const headers = rows[0].map(h => String(h).trim());
+  const headers = rows[0].map(h => h.trim());
   return rows.slice(1).map(row => {
     const obj = {};
-    headers.forEach((h, i) => { const v = row[i]; obj[h] = (v === undefined || v === null) ? '' : String(v).trim(); });
+    headers.forEach((h, i) => { obj[h] = (row[i] || '').trim(); });
     return obj;
   });
 }
@@ -5103,10 +5103,27 @@ async function rpLoadAll() {
     ]);
     rpParseRoster(roster);
     rpParseReport(report);
+    /* DEBUG — log Report sheet results for admin */
+    if (RP._loginEmail && RP._loginEmail.toLowerCase() === 'adam.howle@sunrun.com') {
+      console.log('[DEBUG] Report rows fetched:', report.length);
+      if (report.length > 0) {
+        console.log('[DEBUG] Report row[0] keys:', Object.keys(report[0]));
+        console.log('[DEBUG] Report row[0] Client User ID:', report[0]['Client User ID']);
+        console.log('[DEBUG] Report row[0] Pitches:', report[0]['Pitches']);
+        console.log('[DEBUG] Report row[0] ACs:', report[0]['ACs']);
+      }
+      console.log('[DEBUG] RP.report keys (first 3):', Object.keys(RP.report).slice(0,3));
+    }
     rpParseQTD(qtd);
     rpParseSquadStructure(squad);
     rpParseExport(exp);
     rpResolveIdentity();   /* must run after all parse steps */
+    /* DEBUG — check if user ID matches report */
+    if (RP._loginEmail && RP._loginEmail.toLowerCase() === 'adam.howle@sunrun.com') {
+      console.log('[DEBUG] RP.user.id:', RP.user && RP.user.id);
+      console.log('[DEBUG] RP.report has user ID:', RP.user && !!RP.report[RP.user.id]);
+      console.log('[DEBUG] RP.report[user.id]:', RP.user && JSON.stringify(RP.report[RP.user.id]));
+    }
     rpRenderAll();
   } catch(err) {
     rpClearSession();
