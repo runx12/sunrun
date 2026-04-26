@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="rp-icon-180.png">
 <!--
   ═══════════════════════════════════════════════════════════════════
-  RALLY POINT — ME SCREEN v1
+  RALLY POINT — v2.6 — 2026-04-26
   Approved design · April 2026
   ───────────────────────────────────────────────────────────────────
   This file is the approved reference implementation of the Me screen.
@@ -2343,8 +2343,6 @@ function confirmPay() {
           <thead id="pod-qtd-thead">
             <tr>
               <th class="col-name">Name</th>
-              <th>Tot SRA</th>
-              <th>Tot IC</th>
               <th>SRA pts</th>
               <th>IC pts</th>
               <th>Rank</th>
@@ -2561,8 +2559,6 @@ function podShowTab(tab) {
           <thead>
             <tr>
               <th class="col-name">Name</th>
-              <th>Tot SRA</th>
-              <th>Tot IC</th>
               <th>SRA pts</th>
               <th>IC pts</th>
               <th>Rank</th>
@@ -2798,12 +2794,12 @@ function sqRenderQtd() {
       : '<td class="col-name">' + dot + '<span style="' + youStyle + '">' + r.name + '</span></td>';
     const z = v => v === 0 ? '<td class="val-zero">0</td>' : '<td>' + v + '</td>';
     return '<tr>' + nameCell
-      + z(r.totSra) + z(r.totIc) + z(r.sraPts) + z(r.icPts)
+      + z(r.sraPts) + z(r.icPts)
       + '<td class="td-rank ' + rc + '">' + (RANK_ABBR[r.rank] !== undefined ? RANK_ABBR[r.rank] : r.rank) + '</td></tr>';
   }).join('');
   document.getElementById('sq-qtd-tfoot').innerHTML =
     '<tr class="total-row"><td class="col-name">Total</td>'
-    + [tot.totSra,tot.totIc,tot.sraPts.toFixed(1),tot.icPts.toFixed(1)].map(v=>'<td>'+v+'</td>').join('')
+    + [tot.sraPts.toFixed(1),tot.icPts.toFixed(1)].map(v=>'<td>'+v+'</td>').join('')
     + '<td>—</td></tr>';
 }
 
