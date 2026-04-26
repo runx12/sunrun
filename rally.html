@@ -153,12 +153,17 @@ body {
   inset: 0;
   display: none;
   flex-direction: column;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;           /* wrapper never scrolls — content div does */
   background: #FFFBF0;
 }
 .rp-screen-wrap.rp-active {
   display: flex;
+}
+/* Scrollable content area inside each screen — sits between header and nav */
+.rp-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 
@@ -1116,10 +1121,7 @@ body {
   background: var(--rp-steel);
   border-top: 1px solid var(--rp-border);
   padding: 7px 0 18px;
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  flex-shrink: 0;
+  flex-shrink: 0;   /* never squishes — always at bottom of fixed shell */
 }
 .ni {
   flex: 1;
@@ -1382,14 +1384,25 @@ body {
   border-bottom: 1px solid var(--rp-border);
 }
 /* Squad QTD table — fit all columns without horizontal scroll */
-.pod-table th,
+.pod-table { table-layout: fixed; }
+.pod-table th {
+  font-size: 8px;
+  padding: 9px 3px;
+  white-space: nowrap;
+  text-align: center;
+}
 .pod-table td {
-  padding: 10px 6px;
   font-size: 12px;
+  padding: 11px 3px;
+  text-align: center;
   white-space: nowrap;
 }
-.pod-table th { font-size: 9px; }
-.pod-table .col-name { width: 38%; }
+.pod-table .col-name {
+  width: 34%;
+  text-align: left;
+  padding-left: 14px;
+}
+.pod-table th.col-name { text-align: left; padding-left: 14px; }
 .pod-table {
   width: 100%;
   border-collapse: collapse;
@@ -1947,6 +1960,7 @@ function rpRenderGoalCells() {
       <div class="tog on" id="tog-wtd" onclick="showTab('wtd')">WTD</div>
       <div class="tog"    id="tog-qtd" onclick="showTab('qtd')">QTD Status</div>
     </div>
+    <div class="rp-scroll">
 
     <!-- ── WTD PANEL ── -->
     <div id="panel-wtd" class="panel visible">
@@ -2118,6 +2132,7 @@ function rpRenderGoalCells() {
     </div>
 
 
+    </div><!-- /rp-scroll -->
     <div class="nav">
       <div class="ni on" onclick="rpSwitch('me')">
         <div class="ni-bar" style="background:#1B7A52"></div>
@@ -2284,6 +2299,7 @@ function confirmPay() {
       <div class="tog on" id="pod-tog-wtd" onclick="podShowTab('wtd')">WTD</div>
       <div class="tog" id="pod-tog-qtd" onclick="podShowTab('qtd')">QTD Status</div>
     </div>
+    <div class="rp-scroll">
 
     <!-- WTD PANEL -->
     <div id="pod-panel-wtd" class="panel visible">
@@ -2440,6 +2456,7 @@ function confirmPay() {
     <!-- ZOOM STRIP — up to Squad view -->
 
 
+    </div><!-- /rp-scroll -->
     <div class="nav">
       <div class="ni" onclick="rpSwitch('me')">
         <div class="ni-bar"></div>
@@ -2525,6 +2542,7 @@ function podShowTab(tab) {
       <div class="tog on" id="sq-tog-wtd" onclick="sqShowTab('wtd')">WTD</div>
       <div class="tog" id="sq-tog-qtd" onclick="sqShowTab('qtd')">QTD Status</div>
     </div>
+    <div class="rp-scroll">
 
     <!-- WTD PANEL -->
     <div id="sq-panel-wtd" class="panel visible">
@@ -2626,6 +2644,7 @@ function podShowTab(tab) {
     <!-- ZOOM STRIP — up to Office view -->
 
 
+    </div><!-- /rp-scroll -->
     <div class="nav">
       <div class="ni" onclick="rpSwitch('me')">
         <div class="ni-bar"></div>
@@ -2841,6 +2860,7 @@ sqRenderQtd();
       <div class="tog on" id="off-tog-wtd" onclick="offShowTab('wtd')">WTD</div>
       <div class="tog" id="off-tog-qtd" onclick="offShowTab('qtd')">QTD Status</div>
     </div>
+    <div class="rp-scroll">
 
     <!-- WTD PANEL -->
     <div id="off-panel-wtd" class="panel visible">
@@ -2921,6 +2941,7 @@ sqRenderQtd();
     </div>
 
 
+    </div><!-- /rp-scroll -->
     <div class="nav">
       <div class="ni" onclick="rpSwitch('me')">
         <div class="ni-bar"></div>
@@ -3174,6 +3195,7 @@ offRenderQtd();
       <div class="tog on" id="rgn-tog-wtd" onclick="rgnShowTab('wtd')">WTD</div>
       <div class="tog"    id="rgn-tog-qtd" onclick="rgnShowTab('qtd')">QTD Status</div>
     </div>
+    <div class="rp-scroll">
 
     <!-- WTD PANEL -->
     <div id="rgn-panel-wtd" class="panel visible">
@@ -3208,6 +3230,7 @@ offRenderQtd();
       </div>
     </div>
 
+    </div><!-- /rp-scroll -->
     <div class="nav">
       <div class="ni" onclick="rpSwitch('me')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
@@ -3385,6 +3408,7 @@ function rpRenderRegion() {
       <div class="tog on" id="rnk-tog-office" onclick="rnkSetScope('office')" style="color:#A07800;border-bottom-color:#A07800;background:#fff;">Office</div>
       <div class="tog" id="rnk-tog-region" onclick="rnkSetScope('region')">Region</div>
     </div>
+    <div class="rp-scroll">
 
     <!-- STATS STRIP: office snapshot -->
     <div class="rnk-stats-strip">
@@ -3421,6 +3445,7 @@ function rpRenderRegion() {
       </table>
     </div>
 
+    </div><!-- /rp-scroll -->
     <div class="nav">
       <div class="ni" onclick="rpSwitch('me')">
         <div class="ni-bar"></div>
@@ -4490,37 +4515,31 @@ function _rpGoogleSignIn() {
 /* ── SWIPE GESTURES — left/right navigates full sequence ── */
 (function() {
   var NAV_TABS = ['me', 'pod', 'squad', 'office', 'region', 'status'];
-  var _startX = 0, _startY = 0, _tracking = false;
+  var _startX = 0, _startY = 0, _locked = null; /* null | 'h' | 'v' */
 
   function onTouchStart(e) {
     _startX = e.touches[0].clientX;
     _startY = e.touches[0].clientY;
-    _tracking = true;
+    _locked = null;
   }
 
   function onTouchMove(e) {
-    if (!_tracking) return;
     var dx = Math.abs(e.touches[0].clientX - _startX);
     var dy = Math.abs(e.touches[0].clientY - _startY);
-    /* Once we can tell it's horizontal, prevent scroll so we own the gesture */
-    if (dx > 10 && dx > dy * 1.5) {
+    if (_locked === null && (dx > 8 || dy > 8)) {
+      _locked = dx > dy ? 'h' : 'v';
+    }
+    /* Once locked horizontal, steal the gesture from the scroll container */
+    if (_locked === 'h') {
       e.preventDefault();
-    } else if (dy > 10 && dy > dx * 1.5) {
-      /* Clearly vertical — stop tracking */
-      _tracking = false;
     }
   }
 
   function onTouchEnd(e) {
-    if (!_tracking) return;
-    _tracking = false;
+    if (_locked !== 'h') return;
     var dx    = e.changedTouches[0].clientX - _startX;
-    var dy    = e.changedTouches[0].clientY - _startY;
     var absDx = Math.abs(dx);
-    var absDy = Math.abs(dy);
-
-    /* Require clearly horizontal: at least 45px and more horizontal than vertical */
-    if (absDx < 45 || absDy > absDx * 0.75) return;
+    if (absDx < 40) return;
 
     var screen = RP._screen;
     var idx = NAV_TABS.indexOf(screen);
@@ -4533,13 +4552,21 @@ function _rpGoogleSignIn() {
     }
   }
 
-  /* Attach to each screen wrap — passive:false on move so we can preventDefault */
-  ['me','pod','squad','office','region','status'].forEach(function(id) {
-    var el = document.getElementById('screen-' + id);
-    if (!el) return;
-    el.addEventListener('touchstart', onTouchStart, { passive: true });
-    el.addEventListener('touchmove',  onTouchMove,  { passive: false });
-    el.addEventListener('touchend',   onTouchEnd,   { passive: true });
+  /* Attach to rp-scroll containers — passive:false on move to allow preventDefault */
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.rp-scroll').forEach(function(el) {
+      el.addEventListener('touchstart', onTouchStart, { passive: true });
+      el.addEventListener('touchmove',  onTouchMove,  { passive: false });
+      el.addEventListener('touchend',   onTouchEnd,   { passive: true });
+    });
+    /* Also attach to screen wraps themselves (nav bar, header area) */
+    ['me','pod','squad','office','region','status'].forEach(function(id) {
+      var wrap = document.getElementById('screen-' + id);
+      if (!wrap) return;
+      wrap.addEventListener('touchstart', onTouchStart, { passive: true });
+      wrap.addEventListener('touchmove',  onTouchMove,  { passive: false });
+      wrap.addEventListener('touchend',   onTouchEnd,   { passive: true });
+    });
   });
 })();
 </script>
