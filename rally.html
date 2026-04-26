@@ -761,9 +761,22 @@ body {
    ═══════════════════════════════════════════════ */
 .toggle-row {
   display: flex;
+  position: relative;
   background: var(--rp-steel);
   border-bottom: 1px solid var(--rp-border);
 }
+.toggle-row::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 50%;
+  height: 2.5px;
+  background: var(--rp-me);
+  transform: translateX(0%);
+  transition: transform .22s cubic-bezier(.4,0,.2,1), background .15s;
+  pointer-events: none;
+}
+.toggle-row.on-right::after { transform: translateX(100%); }
 .tog {
   flex: 1;
   text-align: center;
@@ -773,16 +786,21 @@ body {
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--rp-muted);
-  border-bottom: 2.5px solid transparent;
   cursor: pointer;
-  transition: all .15s;
+  transition: color .15s, background .15s;
   user-select: none;
 }
 .tog.on {
   color: var(--rp-me);
-  border-bottom-color: var(--rp-me);
   background: #FFFBF0;
 }
+/* Per-screen accent colors for the sliding indicator + active tab */
+.sq-screen  .toggle-row::after { background: var(--rp-squad); }
+.sq-screen  .tog.on { color: var(--rp-squad); background: #F0F1F8; }
+.off-screen .toggle-row::after { background: var(--rp-office); }
+.off-screen .tog.on { color: var(--rp-office); background: #FFF5F0; }
+.rgn-screen .toggle-row::after { background: var(--rp-region); }
+.rgn-screen .tog.on { color: var(--rp-region); background: #F4F4F3; }
 
 /* ═══════════════════════════════════════════════
    CONTEXT LABEL — explains data source
@@ -1751,7 +1769,7 @@ body {
 /* ================================================
    RALLY POINT — TAB SWITCHING
    ================================================ */
-var RP_SCREENS = ['me','pod','squad','office','status'];
+var RP_SCREENS = ['me','pod','squad','office','region','status'];
 
 function rpSwitch(target) {
   /* Nav tabs always go directly to their screen.
@@ -1777,6 +1795,7 @@ function rpSwitch(target) {
     if (show === 'squad')  rpRenderSquad();
     if (show === 'office') rpRenderOffice();
     if (show === 'status') rpRenderRankings();
+    if (show === 'region') rpRenderRegion();
   } catch(e) { console.error('rpSwitch render error [' + show + ']:', e); }
   RP._screen = show;
 }
@@ -2120,6 +2139,8 @@ function showTab(tab) {
   document.getElementById('panel-qtd').classList.toggle('visible', tab === 'qtd');
   document.getElementById('tog-wtd').classList.toggle('on', tab === 'wtd');
   document.getElementById('tog-qtd').classList.toggle('on', tab === 'qtd');
+  const tr = document.querySelector('#screen-me .toggle-row');
+  if (tr) tr.classList.toggle('on-right', tab === 'qtd');
 }
 
 /* Confetti burst */
@@ -2390,12 +2411,7 @@ function confirmPay() {
     </div>
 
     <!-- ZOOM STRIP — up to Squad view -->
-    <div class="zoom-strip" onclick="rpZoomOut()" style="cursor:pointer;">
-      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-        <path d="M5 8V2M2 4l3-3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Zoom out · Squad view
-    </div>
+
 
     <div class="nav">
       <div class="ni" onclick="rpSwitch('me')">
@@ -2452,7 +2468,7 @@ function podShowTab(tab) {
      SQUAD SCREEN
      Zone: #1A3A5C explorer navy · Office tab active in nav
      ════════════════════════════════════════════════════════ -->
-<div id="screen-squad" class="rp-screen-wrap">
+<div id="screen-squad" class="rp-screen-wrap sq-screen">
 
   <div class="phone">
 
@@ -2576,12 +2592,7 @@ function podShowTab(tab) {
     </div>
 
     <!-- ZOOM STRIP — up to Office view -->
-    <div class="zoom-strip" style="border-top:1px solid var(--rp-border);">
-      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-        <path d="M5 8V2M2 4l3-3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Zoom out · Office view
-    </div>
+
 
     <div class="nav">
       <div class="ni" onclick="rpSwitch('me')">
@@ -2753,13 +2764,12 @@ function sqRenderQtd() {
 function sqShowTab(tab) {
   document.getElementById('sq-panel-wtd').classList.toggle('visible', tab === 'wtd');
   document.getElementById('sq-panel-qtd').classList.toggle('visible', tab === 'qtd');
-  if (tab === 'wtd') {
-    document.getElementById('sq-tog-wtd').style.cssText = '';
-    document.getElementById('sq-tog-qtd').style.cssText = '';
-  } else {
-    document.getElementById('sq-tog-qtd').style.cssText = '';
-    document.getElementById('sq-tog-wtd').style.cssText = '';
-  }
+  document.getElementById('sq-tog-wtd').classList.toggle('on', tab === 'wtd');
+  document.getElementById('sq-tog-qtd').classList.toggle('on', tab === 'qtd');
+  document.getElementById('sq-tog-wtd').style.cssText = '';
+  document.getElementById('sq-tog-qtd').style.cssText = '';
+  const tr = document.querySelector('#screen-squad .toggle-row');
+  if (tr) tr.classList.toggle('on-right', tab === 'qtd');
 }
 
 sqRenderWtd();
@@ -2770,7 +2780,7 @@ sqRenderQtd();
      OFFICE SCREEN
      Zone: #FF6200 Sunrun orange · Office tab active in nav
      ════════════════════════════════════════════════════════ -->
-<div id="screen-office" class="rp-screen-wrap">
+<div id="screen-office" class="rp-screen-wrap off-screen">
   <div class="phone">
 
 
@@ -2874,7 +2884,7 @@ sqRenderQtd();
     </div>
 
     <!-- ZOOM STRIP -->
-    <div class="zoom-strip" style="border-top:1px solid var(--rp-border);">
+    <div class="zoom-strip" style="border-top:1px solid var(--rp-border);cursor:pointer;" onclick="rpSwitch('region')">
       <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
         <path d="M5 8V2M2 4l3-3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -3081,13 +3091,12 @@ function offRenderQtd() {
 function offShowTab(tab) {
   document.getElementById('off-panel-wtd').classList.toggle('visible', tab === 'wtd');
   document.getElementById('off-panel-qtd').classList.toggle('visible', tab === 'qtd');
-  if (tab === 'wtd') {
-    document.getElementById('off-tog-wtd').style.cssText = '';
-    document.getElementById('off-tog-qtd').style.cssText = '';
-  } else {
-    document.getElementById('off-tog-qtd').style.cssText = '';
-    document.getElementById('off-tog-wtd').style.cssText = '';
-  }
+  document.getElementById('off-tog-wtd').classList.toggle('on', tab === 'wtd');
+  document.getElementById('off-tog-qtd').classList.toggle('on', tab === 'qtd');
+  document.getElementById('off-tog-wtd').style.cssText = '';
+  document.getElementById('off-tog-qtd').style.cssText = '';
+  const tr = document.querySelector('#screen-office .toggle-row');
+  if (tr) tr.classList.toggle('on-right', tab === 'qtd');
 }
 
 offRenderWtd();
@@ -3102,6 +3111,216 @@ offRenderQtd();
      YOUR row: pinned to top, highlighted in zone color, with pushpin toggle
      Expand: tap row to reveal progress bars toward next rank
      ════════════════════════════════════════════════════════ -->
+
+<!-- ════════════════════════════════════════════════════════
+     REGION SCREEN
+     Zone: #2C2C2A GMT Ceramic · all squads across region
+     ════════════════════════════════════════════════════════ -->
+<div id="screen-region" class="rp-screen-wrap rgn-screen">
+  <div class="phone">
+
+    <div class="uni-hdr">
+      <div class="uni-hdr-logo"><svg height="13" viewBox="0 0 2429 653" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="RunX"><path d="M2428.75 9H2339.41L2115.35 273.323L2070.65 326.028L1801.9 643H1891.24L2085.65 413.72C2101.21 395.375 2129.49 395.375 2145.06 413.72L2339.46 643H2428.8L2181.97 351.87C2169.31 336.933 2169.31 315.067 2181.97 300.187L2428.75 9Z" fill="#fff"/><path d="M2059.64 203.238L1894.93 9H1805.59L2059.64 308.649C2085.42 278.264 2085.42 233.68 2059.64 203.238Z" fill="#fff"/><path d="M0 9.09279H314.247C446.473 9.09279 539.753 57.0938 539.753 163.041C539.753 250.894 470.029 315.192 339.619 320.618V319.711C375.842 301.599 403.916 265.376 403.916 217.375C403.916 156.707 360.452 122.28 297.062 122.28H134.058V643.014H0.0369037V9.09279H0ZM166.633 347.785V346.878H328.729C492.64 346.878 535.215 417.509 535.215 507.178V643.014H401.194V539.771C401.194 437.436 338.711 382.194 166.633 347.785ZM604.05 444.695V9.09279H738.072V431.102C738.072 491.77 764.331 534.345 826.814 534.345C893.834 534.345 989.818 489.974 1074.95 409.379L1207.17 284.414H1208.08V518.974C1208.08 605.013 1156.47 652.107 1074.95 652.107V429.324C974.429 585.087 900.168 652.107 790.591 652.107C671.052 652.107 604.032 577.846 604.032 444.714L604.05 444.695ZM1456.24 117.762C1389.22 117.762 1293.23 162.133 1208.1 242.728L1075.88 368.601H1074.97V133.133C1074.97 47.0936 1126.58 0 1208.1 0V222.783C1308.6 67.057 1382.86 0.0370379 1492.44 0.0370379C1611.98 0.0370379 1679 74.2979 1679 207.43V643.033H1544.98V221.005C1544.98 160.337 1518.72 117.762 1456.24 117.762Z" fill="#fff"/></svg></div>
+      <div class="uni-hdr-title">Rally Point</div>
+      <button class="uni-hdr-burger" onclick="openDrawer(event)" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="hdr" style="background:var(--rp-region);">
+      <div class="hdr-name" id="rgn-hdr-name" style="color:#fff;">Region</div>
+      <div class="hdr-meta" id="rgn-hdr-meta">
+        <span class="hdr-chip" style="color:rgba(255,255,255,0.7);">Region</span>
+        <span class="hdr-dot" style="background:rgba(255,255,255,0.4);"></span>
+        <span class="hdr-chip" id="rgn-squad-count" style="color:rgba(255,255,255,0.7);">— squads</span>
+      </div>
+    </div>
+
+    <div class="toggle-row">
+      <div class="tog on" id="rgn-tog-wtd" onclick="rgnShowTab('wtd')">WTD</div>
+      <div class="tog"    id="rgn-tog-qtd" onclick="rgnShowTab('qtd')">QTD Status</div>
+    </div>
+
+    <!-- WTD PANEL -->
+    <div id="rgn-panel-wtd" class="panel visible">
+      <div class="ctx-label ctx-wtd">Actual installs · week to date · squads by SRA</div>
+      <div class="off-squads-wrap">
+        <div class="off-col-hdr">
+          <div class="off-col-name">Name</div>
+          <div class="off-col-stat">Pitch</div>
+          <div class="off-col-stat">AC</div>
+          <div class="off-col-stat">CS</div>
+          <div class="off-col-stat">SRA</div>
+          <div class="off-col-stat">CAP</div>
+          <div class="off-col-stat">IC</div>
+        </div>
+        <div id="rgn-wtd-squads"></div>
+      </div>
+    </div>
+
+    <!-- QTD PANEL -->
+    <div id="rgn-panel-qtd" class="panel">
+      <div class="ctx-label ctx-qtd">RunX pts · quarter to date · squads by SRA pts</div>
+      <div class="off-squads-wrap">
+        <div class="off-col-hdr">
+          <div class="off-col-name">Name</div>
+          <div class="off-col-stat">Tot SRA</div>
+          <div class="off-col-stat">Tot IC</div>
+          <div class="off-col-stat">SRA pts</div>
+          <div class="off-col-stat">IC pts</div>
+          <div class="off-col-stat">Rank</div>
+        </div>
+        <div id="rgn-qtd-squads"></div>
+      </div>
+    </div>
+
+    <div class="nav">
+      <div class="ni" onclick="rpSwitch('me')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <div class="ni-lbl">Me</div><div class="ni-bar"></div>
+      </div>
+      <div class="ni" onclick="rpSwitch('squad')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="9" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 20c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M17 14c2.2.5 4 2.3 4 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div class="ni-lbl">Squad</div><div class="ni-bar"></div>
+      </div>
+      <div class="ni" onclick="rpSwitch('office')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="14" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 7V5a4 4 0 018 0v2" stroke="currentColor" stroke-width="1.5"/></svg>
+        <div class="ni-lbl">Office</div><div class="ni-bar"></div>
+      </div>
+      <div class="ni on" onclick="rpSwitch('status')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <div class="ni-lbl">Status</div><div class="ni-bar"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function rgnShowTab(tab) {
+  document.getElementById('rgn-panel-wtd').classList.toggle('visible', tab === 'wtd');
+  document.getElementById('rgn-panel-qtd').classList.toggle('visible', tab === 'qtd');
+  document.getElementById('rgn-tog-wtd').classList.toggle('on', tab === 'wtd');
+  document.getElementById('rgn-tog-qtd').classList.toggle('on', tab === 'qtd');
+  const tr = document.querySelector('#screen-region .toggle-row');
+  if (tr) tr.classList.toggle('on-right', tab === 'qtd');
+}
+
+function rpRenderRegion() {
+  if (!RP.user) return;
+
+  /* All squads across all offices */
+  const allSquads = Object.values(RP.squadById);
+  const squadCount = allSquads.length;
+
+  const rgnHdrName = document.getElementById('rgn-hdr-name');
+  if (rgnHdrName) rgnHdrName.textContent = 'Region';
+  const rgnSquadCount = document.getElementById('rgn-squad-count');
+  if (rgnSquadCount) rgnSquadCount.textContent = squadCount + ' squad' + (squadCount !== 1 ? 's' : '');
+
+  const RANK_CLS = { 'Franchise':'r-fr-txt','Premier':'r-pr-txt','Level III':'r-l3-txt','Level II':'r-l2-txt','Level I':'r-l1-txt','In Combine':'r-cb-txt','No Status':'r-ns-txt' };
+
+  const squadData = allSquads.map(sq => {
+    const members = Object.values(RP.roster).filter(r => r.squad === sq.squad);
+    const leader  = members.find(r => r.name === sq.leader);
+    const tot  = { pitch:0, ac:0, cs:0, sra:0, cap:0, ic:0 };
+    const totQ = { sraQtr:0, icQtr:0, sraPts:0, icPts:0 };
+    members.forEach(rep => {
+      const rpt = RP.report[rep.id]     || {};
+      const qtd = RP.qtdPoints[rep.id]  || {};
+      const exp = RP.exportData[rep.id] || {};
+      tot.pitch += rpt.pitches  || 0;
+      tot.ac    += rpt.ac       || 0;
+      tot.cs    += qtd.csWeek   || 0;
+      tot.sra   += qtd.sraWeek  || 0;
+      tot.cap   += qtd.capWeek  || 0;
+      tot.ic    += qtd.icWeek   || 0;
+      totQ.sraQtr += qtd.sraQtr      || 0;
+      totQ.icQtr  += qtd.icQtrPoints || 0;
+      totQ.sraPts += exp.sraPoints   || 0;
+      totQ.icPts  += qtd.icQtrPoints || 0;
+    });
+    const ldrRpt = leader ? (RP.report[leader.id]     || {}) : {};
+    const ldrQtd = leader ? (RP.qtdPoints[leader.id]  || {}) : {};
+    const ldrExp = leader ? (RP.exportData[leader.id] || {}) : {};
+    const ldrRank = ldrExp.currentRank || 'No Status';
+    return {
+      name:   sq.squad,
+      leader: sq.leader || '—',
+      office: sq.office || '',
+      isYou:  sq.squad === RP.user.squad,
+      sraGoal: sq.wkSRAGoal,
+      icGoal:  sq.wkICGoal,
+      wtd: { ...tot,
+        ldrPitch: ldrRpt.pitches || 0, ldrAc: ldrRpt.ac || 0,
+        ldrCs: ldrQtd.csWeek || 0, ldrSra: ldrQtd.sraWeek || 0,
+        ldrCap: ldrQtd.capWeek || 0, ldrIc: ldrQtd.icWeek || 0,
+      },
+      qtd: { ...totQ,
+        ldrSraQtr: ldrQtd.sraQtr || 0, ldrIcQtr: ldrQtd.icQtrPoints || 0,
+        ldrSraPts: ldrExp.sraPoints || 0, ldrIcPts: ldrQtd.icQtrPoints || 0,
+        ldrRank, ldrRankCls: RANK_CLS[ldrRank] || 'r-ns-txt',
+        sraGoalQtd: sq.qtrSRAGoal, icGoalQtd: sq.qtrICGoal,
+      },
+    };
+  });
+
+  const tc = (v, goal) => {
+    const cls = goal && v > goal ? 'goal-exceeded' : goal && v === goal ? 'goal-met' : '';
+    return `<div class="off-col-stat"><span class="off-sq-tot-val ${cls}">${v}</span></div>`;
+  };
+  const lc = v => v === 0
+    ? `<div class="off-col-stat off-stat-zero">0</div>`
+    : `<div class="off-col-stat off-stat-val">${v}</div>`;
+
+  /* WTD */
+  const sortedWTD = [...squadData].sort((a, b) => {
+    const aLL = a.wtd.ic*3 + a.wtd.cap*2 + a.wtd.sra;
+    const bLL = b.wtd.ic*3 + b.wtd.cap*2 + b.wtd.sra;
+    return bLL - aLL || b.wtd.ac - a.wtd.ac;
+  });
+  const wtdEl = document.getElementById('rgn-wtd-squads');
+  if (wtdEl) wtdEl.innerHTML = sortedWTD.map((sq, i) => {
+    const isTint = i % 2 === 0;
+    const rowBg = isTint ? 'off-row-tint' : 'off-row-white';
+    const ldrBg = isTint ? 'off-row-tint-ldr' : 'off-row-white-ldr';
+    const youCls = sq.isYou ? ' off-squad-hdr-you' : '';
+    const w = sq.wtd;
+    return `<div class="off-squad-block">
+      <div class="off-squad-hdr ${rowBg}${youCls}">
+        <div class="off-col-name"><span class="off-sq-name">${sq.name.toUpperCase()}</span><span style="font-size:8px;color:var(--rp-muted);margin-left:5px;font-weight:400;letter-spacing:0;">${sq.office}</span></div>
+        ${tc(w.pitch)}${tc(w.ac)}${tc(w.cs)}${tc(w.sra, sq.sraGoal)}${tc(w.cap)}${tc(w.ic, sq.icGoal)}
+      </div>
+      <div class="off-leader-row ${ldrBg}">
+        <div class="off-col-name off-ldr-name${sq.isYou ? ' off-ldr-you' : ''}">${sq.leader.split(' ')[0]}</div>
+        ${lc(w.ldrPitch)}${lc(w.ldrAc)}${lc(w.ldrCs)}${lc(w.ldrSra)}${lc(w.ldrCap)}${lc(w.ldrIc)}
+      </div>
+    </div>`;
+  }).join('');
+
+  /* QTD */
+  const sortedQTD = [...squadData].sort((a, b) => b.qtd.sraPts - a.qtd.sraPts || b.qtd.icPts - a.qtd.icPts);
+  const qtdEl = document.getElementById('rgn-qtd-squads');
+  if (qtdEl) qtdEl.innerHTML = sortedQTD.map((sq, i) => {
+    const isTint = i % 2 === 0;
+    const rowBg = isTint ? 'off-row-tint' : 'off-row-white';
+    const ldrBg = isTint ? 'off-row-tint-ldr' : 'off-row-white-ldr';
+    const youCls = sq.isYou ? ' off-squad-hdr-you' : '';
+    const q = sq.qtd;
+    return `<div class="off-squad-block">
+      <div class="off-squad-hdr ${rowBg}${youCls}">
+        <div class="off-col-name"><span class="off-sq-name">${sq.name.toUpperCase()}</span><span style="font-size:8px;color:var(--rp-muted);margin-left:5px;font-weight:400;letter-spacing:0;">${sq.office}</span></div>
+        ${tc(q.sraQtr, q.sraGoalQtd)}${tc(q.icQtr, q.icGoalQtd)}${tc(q.sraPts, q.sraGoalQtd)}${tc(q.icPts, q.icGoalQtd)}
+        <div class="off-col-stat"></div>
+      </div>
+      <div class="off-leader-row ${ldrBg}">
+        <div class="off-col-name off-ldr-name${sq.isYou ? ' off-ldr-you' : ''}">${sq.leader.split(' ')[0]}</div>
+        ${lc(q.ldrSraQtr)}${lc(q.ldrIcQtr)}${lc(q.ldrSraPts)}${lc(q.ldrIcPts)}
+        <div class="off-col-stat td-rank ${q.ldrRankCls}">${q.ldrRank}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+
 <div id="screen-status" class="rp-screen-wrap">
   <div class="phone">
 
@@ -4225,9 +4444,11 @@ function _rpGoogleSignIn() {
 
 
 <script>
-/* ── SWIPE GESTURE — swipe up on Me = go to Pod, swipe up on Pod = go to Squad ── */
+/* ── SWIPE GESTURES ── */
 (function() {
   var _startY = 0, _startX = 0;
+  /* Main nav tab order for left/right swipe */
+  var NAV_TABS = ['me', 'squad', 'office', 'status'];
 
   function onTouchStart(e) {
     _startY = e.touches[0].clientY;
@@ -4236,22 +4457,35 @@ function _rpGoogleSignIn() {
 
   function onTouchEnd(e) {
     var dy = _startY - e.changedTouches[0].clientY;
-    var dx = Math.abs(_startX - e.changedTouches[0].clientX);
+    var dx = e.changedTouches[0].clientX - _startX;
+    var absDy = Math.abs(dy);
+    var absDx = Math.abs(dx);
     var screen = RP._screen;
-    /* Require predominantly vertical swipe, at least 80px up */
-    if (dy > 80 && dx < 60) {
-      if (screen === 'me') {
-        rpZoomToPod();
-      } else if (screen === 'pod') {
-        rpZoomOut();
-      }
+
+    /* ── VERTICAL: swipe up on Me = Pod, swipe up on Pod = Squad ── */
+    if (dy > 80 && absDx < 60) {
+      if (screen === 'me')  { rpZoomToPod(); return; }
+      if (screen === 'pod') { rpZoomOut();   return; }
     }
-    /* Swipe right (dx > 80, dy < 60) on pod = go back to squad */
-    var dxRight = e.changedTouches[0].clientX - _startX;
-    if (dxRight > 80 && Math.abs(_startY - e.changedTouches[0].clientY) < 60) {
-      if (screen === 'pod') {
-        rpZoomOut();
+
+    /* ── HORIZONTAL: swipe left/right between main nav tabs ── */
+    if (absDx > 60 && absDy < 50) {
+      /* Only on main nav screens, not pod */
+      var idx = NAV_TABS.indexOf(screen);
+      if (idx === -1) return; /* pod or region — ignore */
+      if (dx < 0 && idx < NAV_TABS.length - 1) {
+        /* Swipe left → next tab */
+        rpSwitch(NAV_TABS[idx + 1]);
+      } else if (dx > 0 && idx > 0) {
+        /* Swipe right → previous tab */
+        rpSwitch(NAV_TABS[idx - 1]);
       }
+      return;
+    }
+
+    /* ── Swipe right on pod = back to squad ── */
+    if (dx > 80 && absDy < 60 && screen === 'pod') {
+      rpZoomOut();
     }
   }
 
@@ -6409,31 +6643,6 @@ function rpBoot() {
 </script>
 
 
-<script>
-/* ── SWIPE GESTURE — swipe up on Me = Pod, swipe up/right on Pod = Squad ── */
-(function() {
-  var _startY = 0, _startX = 0;
-  function onTouchStart(e) {
-    _startY = e.touches[0].clientY;
-    _startX = e.touches[0].clientX;
-  }
-  function onTouchEnd(e) {
-    var dy     = _startY - e.changedTouches[0].clientY;
-    var dx     = Math.abs(_startX - e.changedTouches[0].clientX);
-    var dxRight = e.changedTouches[0].clientX - _startX;
-    var screen = RP._screen;
-    if (dy > 80 && dx < 60) {
-      if (screen === 'me')  rpZoomToPod();
-      else if (screen === 'pod') rpZoomOut();
-    }
-    if (dxRight > 80 && Math.abs(_startY - e.changedTouches[0].clientY) < 60) {
-      if (screen === 'pod') rpZoomOut();
-    }
-  }
-  document.addEventListener('touchstart', onTouchStart, { passive: true });
-  document.addEventListener('touchend',   onTouchEnd,   { passive: true });
-})();
-</script>
 
 <!-- ── PWA INSTALL NUDGE (iOS only, shown after first data load) ── -->
 <div id="rp-pwa-nudge" aria-live="polite">
