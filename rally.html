@@ -188,7 +188,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 13px 18px 11px;
+  padding: calc(13px + env(safe-area-inset-top)) 18px 11px;
   background: #1F2647;
   flex-shrink: 0;
 }
@@ -5072,7 +5072,7 @@ function rpShowAuthError(msg) {
    SHEET FETCH UTILITY
    ═══════════════════════════════════════════════════════════════════ */
 async function rpFetchSheet(tabName) {
-  const url = `${RP_CONFIG.API_BASE}/${RP_CONFIG.SHEET_ID}/values/${encodeURIComponent(tabName)}`;
+  const url = `${RP_CONFIG.API_BASE}/${RP_CONFIG.SHEET_ID}/values/${encodeURIComponent(tabName)}?valueRenderOption=UNFORMATTED_VALUE`;
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${RP.token}` }
   });
