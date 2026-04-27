@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="rp-icon-180.png">
 <!--
   ═══════════════════════════════════════════════════════════════════
-  RALLY POINT — v3.0 — 2026-04-26
+  RALLY POINT — v3.1 — 2026-04-26
   Approved design · April 2026
   ───────────────────────────────────────────────────────────────────
   This file is the approved reference implementation of the Me screen.
@@ -1768,7 +1768,7 @@ body {
       </svg>
       Sign in with Google
     </button>
-    <div class="rp-login-sub">Sunrun reps only · v3.0</div>
+    <div class="rp-login-sub">Sunrun reps only · v3.1</div>
   </div>
 </div>
 
@@ -5440,6 +5440,8 @@ function rpInitAuth() {
     _tokenClient.requestAccessToken({ prompt: 'select_account' });
   }
 }
+
+function rpSignIn() {
   _tokenClient.requestAccessToken({ prompt: 'consent' });
 }
 
