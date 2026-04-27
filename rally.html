@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="rp-icon-180.png">
 <!--
   ═══════════════════════════════════════════════════════════════════
-  RALLY POINT — v2.9 — 2026-04-26
+  RALLY POINT — v3.0 — 2026-04-26
   Approved design · April 2026
   ───────────────────────────────────────────────────────────────────
   This file is the approved reference implementation of the Me screen.
@@ -1768,7 +1768,7 @@ body {
       </svg>
       Sign in with Google
     </button>
-    <div class="rp-login-sub">Sunrun reps only · v2.9</div>
+    <div class="rp-login-sub">Sunrun reps only · v3.0</div>
   </div>
 </div>
 
@@ -3877,6 +3877,9 @@ function rnkTogglePin(e) {
 function _rpGoogleSignIn() {
   if (window._tokenClient) {
     _tokenClient.requestAccessToken({ prompt: 'select_account' });
+  } else {
+    /* GIS not ready — store intent and trigger as soon as it is */
+    window._rpSignInPending = true;
   }
 }
 </script>
@@ -5431,9 +5434,12 @@ function rpInitAuth() {
       }
     },
   });
+  /* If user tapped Sign In before GIS finished loading, fire now */
+  if (window._rpSignInPending) {
+    window._rpSignInPending = false;
+    _tokenClient.requestAccessToken({ prompt: 'select_account' });
+  }
 }
-
-function rpSignIn() {
   _tokenClient.requestAccessToken({ prompt: 'consent' });
 }
 
