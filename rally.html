@@ -3421,9 +3421,9 @@ function rpRenderRegion() {
           <tr>
             <th class="rnk-th rnk-col-rank">#</th>
             <th class="rnk-th rnk-col-name">Name</th>
-            <th class="rnk-th rnk-col-llp">LLP</th>
-            <th class="rnk-th rnk-col-num">IC</th>
+
             <th class="rnk-th rnk-col-num">SRA</th>
+            <th class="rnk-th rnk-col-num">IC</th>
             <th class="rnk-th rnk-col-num">Career</th>
           </tr>
         </thead>
@@ -3522,7 +3522,6 @@ function rpRenderRegion() {
 /* Column widths */
 .rnk-col-rank  { width: 28px; }
 .rnk-col-name  { width: auto; }
-.rnk-col-llp   { width: 38px; }
 .rnk-col-num   { width: 38px; }
 
 /* Header */
@@ -5873,7 +5872,7 @@ function rpRenderStatus() {
     .filter(Boolean)
     .sort((a,b) => {
       const ro = (RANK_ORDER[a.exp.currentRank]||9) - (RANK_ORDER[b.exp.currentRank]||9);
-      return ro !== 0 ? ro : b.exp.llPoints - a.exp.llPoints;
+      return ro !== 0 ? ro : (b.exp.llPoints * 3 + b.exp.sraPoints) - (a.exp.llPoints * 3 + a.exp.sraPoints);
     });
 
   /* ── Stats strip ── */
@@ -5911,9 +5910,8 @@ function rpRenderStatus() {
         <button class="rnk-pin-btn pinned" id="rnk-pin-btn-top" onclick="rnkTogglePin(event)" title="Unpin">📌</button></div>
         <div><span class="rnk-badge ${badgeCls}">${badgeLbl}</span></div>
       </td>
-      <td class="rnk-td" style="color:#fff">${exp.llPoints||'—'}</td>
-      <td class="rnk-td" style="color:#fff">${(RP.qtdPoints[rep.id]?.icQtrPoints||0)}</td>
       <td class="rnk-td" style="color:#fff">${exp.sraPoints||0}</td>
+      <td class="rnk-td" style="color:#fff">${(RP.qtdPoints[rep.id]?.icQtrPoints||0)}</td>
       <td class="rnk-td" style="color:#fff">${exp.careerIC||0} <span class="rnk-chevron" style="color:rgba(255,255,255,.5)">›</span></td>
     </tr>
     <tr class="rnk-you-drawer-pinned" id="rnk-you-drawer-pinned">${rpRankDrawer(exp)}</tr>`;
@@ -5926,7 +5924,7 @@ function rpRenderStatus() {
     const rank = i+1;
     const isYou = rep.id === RP.user?.id;
     if (isYou && rnkPinned) {
-      html += `<tr style="height:0;border:none;"><td colspan="6"></td></tr>`;
+      html += `<tr style="height:0;border:none;"><td colspan="5"></td></tr>`;
       return;
     }
     const badgeCls = RANK_BADGE[exp.currentRank] || 'rb-ns';
@@ -5942,9 +5940,8 @@ function rpRenderStatus() {
         <div>${rep.name}${pinBtn}</div>
         <div><span class="rnk-badge ${badgeCls}">${badgeLbl}</span></div>
       </td>
-      <td class="rnk-td">${exp.llPoints||'—'}</td>
-      <td class="rnk-td">${(RP.qtdPoints[rep.id]?.icQtrPoints||0)}</td>
       <td class="rnk-td">${exp.sraPoints||0}</td>
+      <td class="rnk-td">${(RP.qtdPoints[rep.id]?.icQtrPoints||0)}</td>
       <td class="rnk-td">${exp.careerIC||0} <span class="rnk-chevron">›</span></td>
     </tr>
     <tr class="rnk-drawer" id="rnkd-${rank}">${rpRankDrawer(exp)}</tr>`;
@@ -5954,9 +5951,9 @@ function rpRenderStatus() {
 }
 
 function rpRankDrawer(exp) {
-  if (!exp) return '<td colspan="6"></td>';
+  if (!exp) return '<td colspan="5"></td>';
   const t = RP_CONFIG.RANK_THRESHOLDS[exp.currentRank];
-  if (!t || !t.next) return `<td colspan="6"><div class="rnk-drawer-inner"><div class="rnk-drawer-title">Top rank achieved — Franchise</div></div></td>`;
+  if (!t || !t.next) return `<td colspan="5"><div class="rnk-drawer-inner"><div class="rnk-drawer-title">Top rank achieved — Franchise</div></div></td>`;
 
   const sraPct = t.sraNeed ? Math.min(100,Math.round((exp.sraPoints/t.sraNeed)*100)) : 100;
   const icPct  = t.icNeed  ? Math.min(100,Math.round(((RP.qtdPoints[exp.id]?.icQtrPoints||0)/t.icNeed)*100)) : 100;
@@ -5965,7 +5962,7 @@ function rpRankDrawer(exp) {
   let inner = `<div class="rnk-drawer-title">→ ${t.next}</div>`;
   if (t.sraNeed) inner += `<div class="rnk-prog-row"><div class="rnk-prog-lbl">SRA</div><div class="rnk-prog-track"><div class="rnk-prog-fill rpf-l2" style="width:${sraPct}%"></div></div><div class="rnk-prog-nums">${exp.sraPoints}<span class="rnk-prog-goal">/${t.sraNeed}</span></div></div>`;
   if (t.icNeed)  inner += `<div class="rnk-prog-row"><div class="rnk-prog-lbl">IC</div><div class="rnk-prog-track"><div class="rnk-prog-fill rpf-l2" style="width:${icPct}%"></div></div><div class="rnk-prog-nums">${icVal}<span class="rnk-prog-goal">/${t.icNeed}</span></div></div>`;
-  return `<td colspan="6"><div class="rnk-drawer-inner">${inner}</div></td>`;
+  return `<td colspan="5"><div class="rnk-drawer-inner">${inner}</div></td>`;
 }
 
 /* ── RANK NORMALIZER — Export uses ALL CAPS, config uses Title Case ── */
