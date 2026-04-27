@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="rp-icon-180.png">
 <!--
   ═══════════════════════════════════════════════════════════════════
-  RALLY POINT — v2.8 — 2026-04-26
+  RALLY POINT — v2.9 — 2026-04-26
   Approved design · April 2026
   ───────────────────────────────────────────────────────────────────
   This file is the approved reference implementation of the Me screen.
@@ -4559,6 +4559,9 @@ function _rpGoogleSignIn() {
     overlay.style.pointerEvents = on ? 'auto' : 'none';
   }
 
+  /* Start disabled — login screen shows first */
+  _setActive(false);
+
   /* Re-evaluate on every navigation */
   var _origNav = window.rpNavigateToScreen;
   if (typeof _origNav === 'function') {
@@ -4568,15 +4571,14 @@ function _rpGoogleSignIn() {
     };
   }
 
-  /* Also re-evaluate when login screen hides/shows */
-  var _origShow = window.rpShowLoginScreen;
-  if (typeof _origShow === 'function') {
-    window.rpShowLoginScreen = function() { _origShow(); _setActive(false); };
+  /* Poll to re-enable once login screen is hidden */
+  function _pollLoginState() {
+    var loginScreen = document.getElementById('rp-login-screen');
+    var loginVisible = loginScreen && loginScreen.classList.contains('visible');
+    _setActive(!loginVisible && _shouldCapture());
+    setTimeout(_pollLoginState, 300);
   }
-  var _origHide = window.rpHideLoginScreen;
-  if (typeof _origHide === 'function') {
-    window.rpHideLoginScreen = function() { _origHide(); setTimeout(function() { _setActive(_shouldCapture()); }, 60); };
-  }
+  setTimeout(_pollLoginState, 500);
 
   overlay.addEventListener('touchstart', function(e) {
     if (!_shouldCapture()) { _setActive(false); return; }
