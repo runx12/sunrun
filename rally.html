@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="rp-icon-180.png">
 <!--
   ═══════════════════════════════════════════════════════════════════
-  RALLY POINT — v2.29 — 2026-04-28
+  RALLY POINT — v2.30 — 2026-04-28
   Approved design · April 2026
   ───────────────────────────────────────────────────────────────────
   This file is the approved reference implementation of the Me screen.
@@ -1825,7 +1825,7 @@ body {
     <!-- Firebase reCAPTCHA container (invisible) -->
     <div id="rp-recaptcha" style="position:fixed;bottom:0;left:0;visibility:hidden;pointer-events:none;"></div>
     <div class="rp-login-sub" style="margin-top:16px;">Rally Point · Sunrun</div>
-    <div class="rp-login-sub" style="margin-top:8px;opacity:0.5;">v2.29</div>
+    <div class="rp-login-sub" style="margin-top:8px;opacity:0.5;">v2.30</div>
   </div>
 </div>
 
@@ -3922,7 +3922,7 @@ function rnkTogglePin(e) {
 
     <!-- Footer -->
     <div class="drw-footer">
-      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.29</div>
+      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.30</div>
       <div class="drw-footer-item" onclick="drwOpen('help')">
         <div class="drw-item-icon">❓</div>
         <div class="drw-footer-label">Help &amp; Feedback</div>
@@ -4368,7 +4368,7 @@ function rnkTogglePin(e) {
     </div>
     <div class="pref-card">
       <div class="pref-card-label">App Version</div>
-      <div style="font-size:12px;color:#888780;">Rally Point v2.29 · April 2026</div>
+      <div style="font-size:12px;color:#888780;">Rally Point v2.30 · April 2026</div>
     </div>
   </div>
   <div class="sub-screen-nav">
@@ -5394,10 +5394,30 @@ async function rpVerifyCode() {
 const RP_PROXY_URL = 'https://script.google.com/macros/s/AKfycbzc5CTIURuhD13VuQxx2k9OVUtZ8EeYifcYMppcGzM2-TMP2_7UP76AFL-OqOuu6K0JtA/exec';
 
 async function rpFetchAllSheets() {
-  const url = RP_PROXY_URL + '?action=getAllSheets';
-  const res = await fetch(url, { redirect: 'follow' });
-  if (!res.ok) throw new Error('Proxy fetch failed: ' + res.status);
-  return res.json();
+  return new Promise((resolve, reject) => {
+    const callbackName = 'rpProxyCallback_' + Date.now();
+    const script = document.createElement('script');
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error('Proxy request timed out'));
+    }, 15000);
+
+    function cleanup() {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[callbackName] = (data) => {
+      cleanup();
+      if (data && data.error) reject(new Error(data.error));
+      else resolve(data);
+    };
+
+    script.src = RP_PROXY_URL + '?action=getAllSheets&callback=' + callbackName;
+    script.onerror = () => { cleanup(); reject(new Error('Script load failed')); };
+    document.head.appendChild(script);
+  });
 }
 
 /* ═══════════════════════════════════════════════════════════════════
