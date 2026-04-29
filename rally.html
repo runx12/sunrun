@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="rp-icon-180.png">
 <!--
   ═══════════════════════════════════════════════════════════════════
-  RALLY POINT — v2.27 — 2026-04-28
+  RALLY POINT — v2.28 — 2026-04-28
   Approved design · April 2026
   ───────────────────────────────────────────────────────────────────
   This file is the approved reference implementation of the Me screen.
@@ -1791,27 +1791,41 @@ body {
     <div class="rp-login-tagline">Rally Point</div>
   </div>
   <div class="rp-login-btn-wrap">
-    <!-- EMAIL MAGIC LINK SIGN-IN -->
-    <div id="rp-email-wrap" style="width:100%;max-width:320px;">
-      <input id="rp-email-input" type="email" placeholder="your@sunrun.com"
-        autocomplete="email" inputmode="email"
-        style="width:100%;padding:14px 16px;font-size:16px;border:none;border-radius:10px;background:rgba(255,255,255,0.15);color:#fff;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;outline:none;-webkit-appearance:none;text-align:center;letter-spacing:0.2px;margin-bottom:12px;box-sizing:border-box;"
-        placeholder="your@sunrun.com">
-      <button id="rp-email-btn" onclick="rpSendMagicLink()"
-        style="width:100%;padding:14px;background:#43E8BF;border:none;color:#0A2420;font-size:15px;font-weight:800;letter-spacing:0.5px;cursor:pointer;border-radius:10px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;">
-        Send Sign-In Link
-      </button>
-      <div id="rp-email-sent" style="display:none;margin-top:14px;background:rgba(67,232,191,0.15);border:1px solid rgba(67,232,191,0.4);border-radius:10px;padding:14px;text-align:center;">
-        <div style="font-size:22px;margin-bottom:6px;">📬</div>
-        <div style="font-size:14px;font-weight:700;color:#43E8BF;margin-bottom:4px;">Check your email</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.4;">Tap the link in your inbox to sign in. You can close this tab.</div>
+    <!-- PHONE NUMBER SIGN-IN -->
+    <div id="rp-phone-wrap" style="width:100%;max-width:320px;">
+      <!-- Step 1: Phone number -->
+      <div id="rp-phone-step1">
+        <input id="rp-phone-number" type="tel" inputmode="numeric" placeholder="(555) 555-5555"
+          autocomplete="tel"
+          oninput="rpFormatPhone(this)"
+          style="width:100%;padding:14px 16px;font-size:18px;border:none;border-radius:10px;background:rgba(255,255,255,0.15);color:#fff;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;outline:none;-webkit-appearance:none;text-align:center;letter-spacing:1px;margin-bottom:12px;box-sizing:border-box;">
+        <button id="rp-phone-submit" onclick="rpPhoneSubmit()"
+          style="width:100%;padding:14px;background:#43E8BF;border:none;color:#0A2420;font-size:15px;font-weight:800;letter-spacing:0.5px;cursor:pointer;border-radius:10px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;">
+          Send Code
+        </button>
       </div>
-      <div id="rp-auth-err" style="display:none;margin-top:10px;font-size:12px;color:#F05252;text-align:center;"></div>
+      <!-- Step 2: Verification code (hidden until SMS sent) -->
+      <div id="rp-phone-step2" style="display:none;margin-top:12px;">
+        <div style="font-size:13px;color:rgba(255,255,255,0.7);text-align:center;margin-bottom:12px;line-height:1.4;">
+          Code sent to <span id="rp-phone-sent-to" style="color:#43E8BF;font-weight:700;"></span>
+        </div>
+        <input id="rp-phone-code" type="tel" inputmode="numeric" maxlength="6" placeholder="6-digit code"
+          style="width:100%;padding:14px 16px;font-size:22px;border:none;border-radius:10px;background:rgba(255,255,255,0.15);color:#fff;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;outline:none;-webkit-appearance:none;text-align:center;letter-spacing:6px;margin-bottom:12px;box-sizing:border-box;">
+        <button id="rp-code-submit" onclick="rpVerifyCode()"
+          style="width:100%;padding:14px;background:#43E8BF;border:none;color:#0A2420;font-size:15px;font-weight:800;letter-spacing:0.5px;cursor:pointer;border-radius:10px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;">
+          Verify
+        </button>
+        <button onclick="rpPhoneReset()"
+          style="width:100%;padding:10px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:12px;cursor:pointer;margin-top:6px;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;">
+          Use a different number
+        </button>
+      </div>
+      <div id="rp-phone-err" style="display:none;margin-top:10px;font-size:12px;color:#F05252;text-align:center;line-height:1.4;"></div>
     </div>
     <!-- Firebase reCAPTCHA container (invisible) -->
     <div id="rp-recaptcha" style="position:fixed;bottom:0;left:0;visibility:hidden;pointer-events:none;"></div>
-    <div class="rp-login-sub" style="margin-top:16px;">Sunrun reps only</div>
-    <div class="rp-login-sub" style="margin-top:8px;opacity:0.5;">v2.27</div>
+    <div class="rp-login-sub" style="margin-top:16px;">Rally Point · Sunrun</div>
+    <div class="rp-login-sub" style="margin-top:8px;opacity:0.5;">v2.28</div>
   </div>
 </div>
 
@@ -3908,7 +3922,7 @@ function rnkTogglePin(e) {
 
     <!-- Footer -->
     <div class="drw-footer">
-      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.27</div>
+      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.28</div>
       <div class="drw-footer-item" onclick="drwOpen('help')">
         <div class="drw-item-icon">❓</div>
         <div class="drw-footer-label">Help &amp; Feedback</div>
@@ -4354,7 +4368,7 @@ function rnkTogglePin(e) {
     </div>
     <div class="pref-card">
       <div class="pref-card-label">App Version</div>
-      <div style="font-size:12px;color:#888780;">Rally Point v2.27 · April 2026</div>
+      <div style="font-size:12px;color:#888780;">Rally Point v2.28 · April 2026</div>
     </div>
   </div>
   <div class="sub-screen-nav">
@@ -5249,60 +5263,12 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch(e) { console.warn('[RP] reCAPTCHA init failed:', e); }
 });
 
-/* ── Magic Link Sign-In ── */
-const MAGIC_LINK_URL = window.location.href.split('?')[0]; /* current page, no query params */
-
-async function rpSendMagicLink() {
-  const input = document.getElementById('rp-email-input');
-  const btn   = document.getElementById('rp-email-btn');
-  const errEl = document.getElementById('rp-auth-err');
-  const sentEl= document.getElementById('rp-email-sent');
-
-  const email = (input ? input.value.trim() : '').toLowerCase();
-  errEl.style.display = 'none';
-  errEl.textContent   = '';
-
-  if (!email || !email.includes('@')) {
-    errEl.textContent   = 'Please enter your Sunrun email address.';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (!email.endsWith('@sunrun.com')) {
-    errEl.textContent   = 'Please use your @sunrun.com email address.';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  btn.textContent = 'Sending…';
-  btn.disabled    = true;
-
-  const actionCodeSettings = {
-    url:             MAGIC_LINK_URL,
-    handleCodeInApp: true,
-  };
-
-  try {
-    await _fbAuth.sendSignInLinkToEmail(email, actionCodeSettings);
-    window.localStorage.setItem('rp_email_for_signin', email);
-    if (sentEl) sentEl.style.display = 'block';
-    if (input)  input.style.display   = 'none';
-    btn.style.display = 'none';
-    console.log('[RP Auth] Magic link sent to', email);
-  } catch(err) {
-    console.error('[RP Auth] Magic link send failed:', err);
-    btn.textContent = 'Send Sign-In Link';
-    btn.disabled    = false;
-    errEl.textContent   = 'Could not send link. Please try again.';
-    errEl.style.display = 'block';
-  }
-}
-
 /* ── Sign-out ── */
 async function rpSignOut() {
   try { await _fbAuth.signOut(); } catch(e) {}
   RP.token = null; RP.user = null;
-  RP._loginEmail = null; RP._fbUser = null;
-  window.localStorage.removeItem('rp_email_for_signin');
+  RP._loginEmail = null; RP._fbUser = null; RP._loginPhone = null;
+  rpPhoneReset();
   rpShowLoginScreen();
 }
 
@@ -5333,63 +5299,88 @@ function rpShowDataError(msg, retryFn) {
 
 /* ── Phone Sign-In ── */
 let _phoneConfirmation = null;
-/* _recaptchaVerifier declared above in Firebase init block */
-
-function rpShowPhoneInput() {
-  document.getElementById('rp-phone-input-wrap').style.display = 'block';
-  document.getElementById('rp-phone-btn').style.display = 'none';
-  document.getElementById('rp-phone-number').focus();
-  /* reCAPTCHA already initialized on DOM ready — render if not yet done */
-  if (_recaptchaVerifier && !_recaptchaVerifier._rendered) {
-    _recaptchaVerifier.render().then(() => { _recaptchaVerifier._rendered = true; }).catch(() => {});
-  }
-}
 
 function rpFormatPhone(el) {
-  let v = el.value.replace(/\D/g,'');
+  let v = el.value.replace(/\D/g,'').slice(0,10);
   if (v.length >= 6) v = '(' + v.slice(0,3) + ') ' + v.slice(3,6) + '-' + v.slice(6,10);
   else if (v.length >= 3) v = '(' + v.slice(0,3) + ') ' + v.slice(3);
   el.value = v;
 }
 
+function rpPhoneReset() {
+  _phoneConfirmation = null;
+  const step1 = document.getElementById('rp-phone-step1');
+  const step2 = document.getElementById('rp-phone-step2');
+  const errEl = document.getElementById('rp-phone-err');
+  const numEl = document.getElementById('rp-phone-number');
+  const codeEl= document.getElementById('rp-phone-code');
+  const btn   = document.getElementById('rp-phone-submit');
+  if (step1) step1.style.display = 'block';
+  if (step2) step2.style.display = 'none';
+  if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+  if (numEl) { numEl.value = ''; numEl.disabled = false; }
+  if (codeEl){ codeEl.value = ''; }
+  if (btn)   { btn.textContent = 'Send Code'; btn.disabled = false; }
+}
+
 async function rpPhoneSubmit() {
   const btn   = document.getElementById('rp-phone-submit');
   const errEl = document.getElementById('rp-phone-err');
+  const numEl = document.getElementById('rp-phone-number');
   errEl.style.display = 'none';
 
-  if (!_phoneConfirmation) {
-    /* Step 1: send SMS code */
-    const raw = document.getElementById('rp-phone-number').value.replace(/\D/g,'');
-    if (raw.length < 10) { errEl.textContent = 'Enter a valid 10-digit number.'; errEl.style.display='block'; return; }
-    btn.textContent = 'Sending…'; btn.disabled = true;
-    try {
-      _phoneConfirmation = await _fbAuth.signInWithPhoneNumber('+1' + raw, _recaptchaVerifier);
-      document.getElementById('rp-phone-code-wrap').style.display = 'block';
-      document.getElementById('rp-phone-number').disabled = true;
-      btn.textContent = 'Verify Code'; btn.disabled = false;
-      document.getElementById('rp-phone-code').focus();
-    } catch(err) {
-      errEl.textContent = err.message || 'Could not send code. Check the number and try again.';
-      errEl.style.display = 'block';
-      btn.textContent = 'Send Code'; btn.disabled = false;
-      _phoneConfirmation = null;
-    }
-  } else {
-    /* Step 2: confirm code */
-    const code = (document.getElementById('rp-phone-code').value || '').trim();
-    if (code.length < 6) { errEl.textContent = 'Enter the 6-digit code.'; errEl.style.display='block'; return; }
-    btn.textContent = 'Verifying…'; btn.disabled = true;
-    try {
-      const result = await _phoneConfirmation.confirm(code);
-      RP._fbUser     = result.user;
-      RP._loginPhone = result.user.phoneNumber;
-      console.log('[RP Phone Auth] Signed in:', RP._loginPhone);
-      rpLoadAll();
-    } catch(err) {
-      errEl.textContent = 'Incorrect code — please try again.';
-      errEl.style.display = 'block';
-      btn.textContent = 'Verify Code'; btn.disabled = false;
-    }
+  const raw = (numEl ? numEl.value : '').replace(/\D/g,'');
+  if (raw.length < 10) {
+    errEl.textContent   = 'Please enter a valid 10-digit US number.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.textContent = 'Sending…'; btn.disabled = true;
+
+  try {
+    _phoneConfirmation = await _fbAuth.signInWithPhoneNumber('+1' + raw, _recaptchaVerifier);
+    /* Show step 2 */
+    const sentTo = document.getElementById('rp-phone-sent-to');
+    if (sentTo) sentTo.textContent = numEl.value;
+    document.getElementById('rp-phone-step1').style.display = 'none';
+    document.getElementById('rp-phone-step2').style.display = 'block';
+    document.getElementById('rp-phone-code').focus();
+    console.log('[RP Phone] Code sent to +1' + raw);
+  } catch(err) {
+    console.error('[RP Phone] Send failed:', err);
+    errEl.textContent   = err.message || 'Could not send code. Check the number and try again.';
+    errEl.style.display = 'block';
+    btn.textContent = 'Send Code'; btn.disabled = false;
+    _phoneConfirmation = null;
+  }
+}
+
+async function rpVerifyCode() {
+  const btn   = document.getElementById('rp-code-submit');
+  const errEl = document.getElementById('rp-phone-err');
+  const code  = (document.getElementById('rp-phone-code').value || '').trim();
+  errEl.style.display = 'none';
+
+  if (code.length < 6) {
+    errEl.textContent   = 'Enter the 6-digit code from your text.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.textContent = 'Verifying…'; btn.disabled = true;
+
+  try {
+    const result   = await _phoneConfirmation.confirm(code);
+    RP._fbUser     = result.user;
+    RP._loginPhone = result.user.phoneNumber;
+    console.log('[RP Phone Auth] Signed in:', RP._loginPhone);
+    rpLoadAll();
+  } catch(err) {
+    console.error('[RP Phone] Verify failed:', err);
+    errEl.textContent   = 'Incorrect code — please try again.';
+    errEl.style.display = 'block';
+    btn.textContent = 'Verify'; btn.disabled = false;
   }
 }
 
@@ -6615,36 +6606,6 @@ function rpShowErrorScreen(msg) {
 function _rpBoot() {
   let _authResolved = false;
 
-  /* ── Handle magic link completion ──
-     When user taps the email link, Firebase redirects back here with
-     a sign-in link in the URL. We complete the sign-in silently. */
-  if (_fbAuth.isSignInWithEmailLink(window.location.href)) {
-    let email = window.localStorage.getItem('rp_email_for_signin');
-    if (!email) {
-      /* Fallback: ask on a different device */
-      email = window.prompt('Please confirm your email to sign in:');
-    }
-    if (email) {
-      _fbAuth.signInWithEmailLink(email, window.location.href)
-        .then(result => {
-          window.localStorage.removeItem('rp_email_for_signin');
-          /* Clean the URL so link can't be reused */
-          window.history.replaceState({}, document.title, window.location.pathname);
-          RP._loginEmail = result.user.email;
-          RP._fbUser     = result.user;
-          console.log('[RP Auth] Magic link sign-in OK:', RP._loginEmail);
-          rpLoadAll();
-        })
-        .catch(err => {
-          console.error('[RP Auth] Magic link sign-in failed:', err);
-          rpShowLoginScreen();
-          rpShowAuthError('Sign-in link expired or already used. Please request a new one.');
-        });
-      return; /* onAuthStateChanged will fire after signInWithEmailLink resolves */
-    }
-  }
-
-  /* ── Normal boot: check for existing session ── */
   _fbAuth.onAuthStateChanged(async (fbUser) => {
     _authResolved = true;
     if (!fbUser) {
@@ -6652,6 +6613,7 @@ function _rpBoot() {
       return;
     }
     RP._loginEmail = fbUser.email || null;
+    RP._loginPhone = fbUser.phoneNumber || null;
     RP._fbUser     = fbUser;
     console.log('[RP Boot] Session for', fbUser.email || fbUser.phoneNumber);
     rpLoadAll();
