@@ -4079,13 +4079,11 @@ function renderWTD(){
     });
   } else if(wtdView==='leaders'){
     // Squad header with full squad totals + only the squad leader row
-    const groups={}, groupOrder=[];
-    // Group by roster squad (WTD_MAP entries have no .squad field)
-    ROSTER_EMPLOYEES.forEach(r=>{
-      const k=r.squad||'';
-      const e=WTD_MAP[r.id];
-      if(!e) return;
-      if(!groups[k]){groups[k]=[];groupOrder.push(k);}
+    // Build groups from the already-processed `data` array so isLW is respected
+    const groups={};
+    data.forEach(e=>{
+      const k=e.squad||'';
+      if(!groups[k]) groups[k]=[];
       groups[k].push(e);
     });
     const OFFICE_ORDER={'Newport Beach':0,'Orange County':1,'Riverside':2};
@@ -4101,14 +4099,14 @@ function renderWTD(){
       const leaderName=sqCfg?.leader||'';
       const allMembers=groups[k]||[];
       rows.push({isHeader:true, label:sqGoalWTD(k, allMembers), squadKey:k});
-      // Find leader by matching name in roster, then pull WTD data by that ID
+      // Find the leader's entry in data (already week-mode-aware)
       const leaderRoster = ROSTER_EMPLOYEES.find(r=>r.name===leaderName);
-      const leaderWTD = leaderRoster ? WTD_MAP[leaderRoster.id] : null;
+      const leaderWTD = leaderRoster ? data.find(e=>e.id===leaderRoster.id) : null;
       if(leaderWTD){
-        // Merge name from roster into the WTD object for display
+        // Merge name/office from roster in case data entry is missing them
         rows.push({isHeader:false, emp:{...leaderWTD, name:leaderRoster.name, office:leaderRoster.office, squad:k}});
       } else {
-        // Leader not in WTD data — show placeholder
+        // Leader not in current data — show placeholder
         rows.push({isHeader:false, emp:{id:leaderRoster?.id||'',name:leaderName,squad:k,office:leaderRoster?.office||'',wtd_ac:0,wtd_cs:0,wtd_sra:0,wtd_cap:0,wtd_ic:0,knocks:0,pitches:0,hours_knocked:0,exp_rank:''}});
       }
     });
@@ -5684,13 +5682,13 @@ function ob_renderTable() {
       </td>
       <td style="color:var(--text-muted);font-size:13px;white-space:nowrap;">${leaderDisplay}</td>
       <td class="td-check"><span class="check ${emp.infoCall}" data-eid="${emp.id}" data-field="infoCall" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
-      <td class="td-check"><span class="check ${emp._conveyAuto&&emp._conveyAuto.has('jobOffer')&&emp.jobOffer?'convey':emp.jobOffer}" data-eid="${emp.id}" data-field="jobOffer" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
+      <td class="td-check"><span class="check ${emp.jobOffer}" data-eid="${emp.id}" data-field="jobOffer" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
       <td class="td-check"><span class="check ${emp.i9}" data-eid="${emp.id}" data-field="i9" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
-      <td class="td-check"><span class="check ${emp._conveyAuto&&emp._conveyAuto.has('bgClear')&&emp.bgClear?'convey':emp.bgClear}" data-eid="${emp.id}" data-field="bgClear" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
+      <td class="td-check"><span class="check ${emp.bgClear}" data-eid="${emp.id}" data-field="bgClear" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
       <td class="td-check"><span class="check ${emp.pronto}" data-eid="${emp.id}" data-field="pronto" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
       <td class="td-check"><span class="check ${emp.skool}" data-eid="${emp.id}" data-field="skool" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
       <td class="td-check"><span class="check ${emp.squadAssign}" data-eid="${emp.id}" data-field="squadAssign" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
-      <td class="td-check"><span class="check ${emp._conveyAuto&&emp._conveyAuto.has('bootcamp')&&emp.bootcamp?'convey':emp.bootcamp}" data-eid="${emp.id}" data-field="bootcamp" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
+      <td class="td-check"><span class="check ${emp.bootcamp}" data-eid="${emp.id}" data-field="bootcamp" onclick="ob_toggleCheck(this.dataset.eid,this.dataset.field)">✓</span></td>
       <td>${hireDateDisplay}</td>
       <td>${fcDisplay}</td>
     </tr>`;
@@ -5758,20 +5756,11 @@ function ob_openInfoModal(id) {
   const stepFields = [emp.infoCall, emp.jobOffer, emp.i9, emp.bgClear, emp.pronto, emp.skool, emp.squadAssign, emp.bootcamp];
   const stepKeys   = ['infoCall','jobOffer','i9','bgClear','pronto','skool','squadAssign','bootcamp'];
   document.getElementById('ob-im-steps').innerHTML = stepNames.map((s, i) => {
-    const isConvey = emp._conveyAuto && emp._conveyAuto.has(stepKeys[i]) && stepFields[i];
-    const style = isConvey
-      ? 'color:#EF9F27;border-color:rgba(239,159,39,.4);background:rgba(239,159,39,.08)'
-      : stepFields[i]
-        ? 'color:#2DC48E;border-color:rgba(45,196,142,.4);background:rgba(45,196,142,.08)'
-        : 'color:var(--text-muted);border-color:rgba(248,249,249,.12)';
+    const style = stepFields[i]
+      ? 'color:#2DC48E;border-color:rgba(45,196,142,.4);background:rgba(45,196,142,.08)'
+      : 'color:var(--text-muted);border-color:rgba(248,249,249,.12)';
     return `<span style="font-size:9px;padding:2px 6px;border:0.5px solid;letter-spacing:1px;text-transform:uppercase;${style}">${s}</span>`;
   }).join('');
-  // Amber border on Convey-backfilled contact inputs
-  ['ob-im-mobile','ob-im-referral'].forEach(function(elId) {
-    var fieldKey = elId === 'ob-im-mobile' ? 'mobile' : 'referral';
-    var el = document.getElementById(elId);
-    if (el) el.style.borderColor = (emp._conveyAuto && emp._conveyAuto.has(fieldKey)) ? 'rgba(239,159,39,.6)' : '';
-  });
   document.getElementById('ob-infoModal').classList.add('open');
 }
 
@@ -7440,90 +7429,6 @@ function showSyncBanner(msg, isError) {
   }
 }
 
-// ── CONVEY ENRICHMENT ─────────────────────────────────────────────────────────
-// Matches Convey records to existing ob_employees by mobile (primary) or
-// first+last name (fallback). Never adds new rows. Only promotes steps to true,
-// never demotes. Auto-promoted steps are tracked in emp._conveyAuto (a Set) so
-// the table can render them in amber. Backfills blank contact fields.
-// Writes any changes back to the Onboarding Google Sheet.
-
-function conveyNormPhone(raw) {
-  var d = (raw || '').replace(/\D/g, '');
-  if (d.length === 11 && d[0] === '1') d = d.slice(1);
-  return d.length === 10 ? d : '';
-}
-
-function applyConveyEnrichment(conveyRows) {
-  if (!conveyRows || !conveyRows.length) return;
-
-  // Build lookup maps from Convey data
-  var conveyByPhone = {};
-  var conveyByName  = {};
-  conveyRows.forEach(function(r) {
-    var phone = conveyNormPhone(r['mobile'] || '');
-    var name  = ((r['first_name'] || '') + ' ' + (r['last_name'] || '')).trim().toLowerCase();
-    if (phone) conveyByPhone[phone] = r;
-    if (name)  conveyByName[name]   = r;
-  });
-
-  ob_employees.forEach(function(emp) {
-    // ── Find match ──
-    var cr = null;
-    var empPhone = conveyNormPhone(emp.mobile || '');
-    if (empPhone) cr = conveyByPhone[empPhone];
-    if (!cr) {
-      var empName = (emp.name || '').trim().toLowerCase();
-      cr = conveyByName[empName] || null;
-    }
-    if (!cr) return; // no Convey record found — leave untouched
-
-    if (!emp._conveyAuto) emp._conveyAuto = new Set();
-
-    // ── Step enrichment (promote only) ──
-    var iStatus = (cr['interview_status'] || '').trim().toLowerCase();
-    var bStatus = (cr['bootcamp_status']  || '').trim().toLowerCase();
-    var fHired  = (cr['fully_hired']      || '').trim().toLowerCase();
-
-    // Step 2 — Offer: interview_status = kept | confirmed | scheduled
-    if (!emp.jobOffer && (iStatus === 'kept' || iStatus === 'confirmed' || iStatus === 'scheduled')) {
-      emp.jobOffer = true;
-      emp._conveyAuto.add('jobOffer');
-      if (emp._sheetRow) sheetsWriteCell('Onboarding', emp._sheetRow, OB_COL.jobOffer, 'TRUE');
-    }
-
-    // Step 4 — BG Clear: fully_hired = true
-    if (!emp.bgClear && fHired === 'true') {
-      emp.bgClear = true;
-      emp._conveyAuto.add('bgClear');
-      if (emp._sheetRow) sheetsWriteCell('Onboarding', emp._sheetRow, OB_COL.bgClear, 'TRUE');
-    }
-
-    // Step 8 — Bootcamp: bootcamp_status = attended
-    if (!emp.bootcamp && bStatus === 'attended') {
-      emp.bootcamp = true;
-      emp._conveyAuto.add('bootcamp');
-      if (emp._sheetRow) sheetsWriteCell('Onboarding', emp._sheetRow, OB_COL.bootcamp, 'TRUE');
-    }
-
-    // ── Contact field backfill (blank fields only) ──
-    if (!emp.mobile && cr['mobile']) {
-      emp.mobile = cr['mobile'].trim();
-      if (emp._sheetRow) sheetsWriteCell('Onboarding', emp._sheetRow, OB_COL.mobile, emp.mobile);
-    }
-    if (!emp.homeEmail && cr['email']) {
-      emp.homeEmail = cr['email'].trim();
-      if (emp._sheetRow) sheetsWriteCell('Onboarding', emp._sheetRow, OB_COL.email, emp.homeEmail);
-    }
-    if (!emp.address && cr['home_address']) {
-      emp.address = cr['home_address'].trim();
-      if (emp._sheetRow) sheetsWriteCell('Onboarding', emp._sheetRow, OB_COL.address, emp.address);
-    }
-    if (!emp.referral && cr['referral_name']) {
-      emp.referral = cr['referral_name'].trim();
-      if (emp._sheetRow) sheetsWriteCell('Onboarding', emp._sheetRow, OB_COL.referral, emp.referral);
-    }
-  });
-}
 
 async function fetchSheetsData(opts) {
   // opts.skipOnboarding = true  — skip Onboarding re-fetch to preserve _sheetRow
@@ -7589,18 +7494,6 @@ async function fetchSheetsData(opts) {
     } catch(e) { errors.push('Onboarding: ' + e.message); }
   }
 
-  // ── Convey (enrichment only — never adds rows) ────────────────────────────
-  try {
-    var cvRes = await fetchWithTimeout(sheetsUrl('Convey'));
-    if (!cvRes.ok) throw new Error('HTTP ' + cvRes.status);
-    var cvRows = sheetsRowsToObjects((await cvRes.json()).values || []);
-    // sheetsRowsToObjects lowercases header keys, so column names match CSV exactly
-    applyConveyEnrichment(cvRows);
-    console.log('[Convey] enrichment applied to', ob_employees.length, 'onboard records');
-  } catch(e) {
-    // Non-fatal — Onboarding continues to work without Convey
-    console.warn('[Convey] could not load:', e.message);
-  }
 
   // ── QTD Points ──────────────────────────────────────────────────────────────
   try {
