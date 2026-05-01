@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="rp-icon-180.png">
 <!--
   ═══════════════════════════════════════════════════════════════════
-  RALLY POINT — v2.31 — 2026-04-28
+  RALLY POINT — v2.32 — 2026-04-28
   Approved design · April 2026
   ───────────────────────────────────────────────────────────────────
   This file is the approved reference implementation of the Me screen.
@@ -1825,7 +1825,7 @@ body {
     <!-- Firebase reCAPTCHA container (invisible) -->
     <div id="rp-recaptcha" style="position:fixed;bottom:0;left:0;visibility:hidden;pointer-events:none;"></div>
     <div class="rp-login-sub" style="margin-top:16px;">Rally Point · Sunrun</div>
-    <div class="rp-login-sub" style="margin-top:8px;opacity:0.5;">v2.31</div>
+    <div class="rp-login-sub" style="margin-top:8px;opacity:0.5;">v2.32</div>
   </div>
 </div>
 
@@ -3922,7 +3922,7 @@ function rnkTogglePin(e) {
 
     <!-- Footer -->
     <div class="drw-footer">
-      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.31</div>
+      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.32</div>
       <div class="drw-footer-item" onclick="drwOpen('help')">
         <div class="drw-item-icon">❓</div>
         <div class="drw-footer-label">Help &amp; Feedback</div>
@@ -4368,7 +4368,7 @@ function rnkTogglePin(e) {
     </div>
     <div class="pref-card">
       <div class="pref-card-label">App Version</div>
-      <div style="font-size:12px;color:#888780;">Rally Point v2.31 · April 2026</div>
+      <div style="font-size:12px;color:#888780;">Rally Point v2.32 · April 2026</div>
     </div>
   </div>
   <div class="sub-screen-nav">
@@ -4458,7 +4458,7 @@ function rnkTogglePin(e) {
     </div>
 
     <!-- Input bar -->
-    <div style="flex-shrink:0;background:#fff;border-top:1px solid #E0DDD6;padding:10px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:7px;">
+    <div style="flex-shrink:0;background:#fff;border-top:1px solid #E0DDD6;padding:10px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:7px;position:relative;z-index:20;">
       <!-- Hidden file inputs -->
       <input type="file" id="chat-img-library" accept="image/*" style="display:none" onchange="chatHandleImageFile(this)">
       <input type="file" id="chat-img-camera"  accept="image/*" capture="environment" style="display:none" onchange="chatHandleImageFile(this)">
