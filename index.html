@@ -1426,6 +1426,7 @@ body.light-mode #panel-status-incentive .filter-btn.active{
 #panel-onboard-employee .badge-zoom{ color: var(--cyan-dark); border-color: rgba(90,158,160,.35); background: rgba(90,158,160,.1); }
 #panel-onboard-employee .badge-no{ color: #F05252; border-color: rgba(240,82,82,.35); background: rgba(240,82,82,.08); }
 #panel-onboard-employee .badge-other{ color: var(--text-muted); border-color: rgba(248,249,249,.18); background: transparent; }
+#panel-onboard-employee .badge-offersent{ color: #F0C030; border-color: rgba(240,192,48,.35); background: rgba(240,192,48,.1); }
 /* Checkbox cells */
 #panel-onboard-employee .check{
     display: inline-flex; align-items: center; justify-content: center;
@@ -2326,8 +2327,10 @@ const SHEETS_ID       = CONSUL_CONFIG.sheets_id;
 const SHEETS_BASE     = 'https://sheets.googleapis.com/v4/spreadsheets';
 const OAUTH_CLIENT_ID = CONSUL_CONFIG.oauth_client_id;
 const NOTIFY_EMAIL   = CONSUL_CONFIG.office_admin_email;
-const ADAM_PHONE     = CONSUL_CONFIG.admin_phone;
-const ADAM_EMAIL     = CONSUL_CONFIG.admin_email;
+const ADAM_PHONE          = CONSUL_CONFIG.admin_phone;
+const ADAM_EMAIL          = CONSUL_CONFIG.admin_email;
+const ADMIN_DISPLAY_NAME  = CONSUL_CONFIG.admin_display_name || 'Admin';
+const HR_SMS_NUMBER       = CONSUL_CONFIG.hr_sms_number      || '';
 // OFFICE_COLORS and OFFICE_MEETING_INFO are set after DOM ready (see applyBranding).
 // They are also aliased immediately here so early code that references them works.
 let OFFICE_COLORS      = Object.assign({}, CONSUL_CONFIG.office_colors);
@@ -5527,7 +5530,8 @@ function ob_statusBadge(s) {
   if (v === 'NO SHOW')   return `<span class="badge badge-noshow">NO SHOW</span>`;
   if (v === 'SCHEDULED') return `<span class="badge badge-scheduled">SCHEDULED</span>`;
   if (v === 'ZOOM')      return `<span class="badge badge-zoom">ZOOM</span>`;
-  if (v === 'NO')        return `<span class="badge badge-no">NO</span>`;
+  if (v === 'NO')          return `<span class="badge badge-no">NO</span>`;
+  if (v === 'OFFER SENT')  return `<span class="badge badge-offersent">OFFER SENT</span>`;
   return s ? `<span class="badge badge-other">${s}</span>` : '';
 }
 
@@ -5670,7 +5674,7 @@ function ob_renderTable() {
       <td style="text-align:center;white-space:nowrap;padding:4px 8px;">
         <button class="btn-sunrun${emp.i9 ? ' btn-sunrun--dim' : ''}" data-eid="${emp.id}" onclick="event.stopPropagation();${emp.i9 ? '' : 'ob_openSunrunPanel(this.dataset.eid)'}" title="${emp.i9 ? 'I9 complete \u2014 already submitted' : 'Submit to Sunrun'}"${emp.i9 ? ' disabled' : ''}>CONVEY</button>
       </td>
-      <td class="editable" data-eid="${emp.id}" onclick="ob_editStatusCell(this,this.dataset.eid)">${ob_statusBadge(emp.status)}</td>
+      <td class="editable" data-eid="${emp.id}" onclick="ob_editStatusCell(this,this.dataset.eid)">${ob_statusBadge(emp.status)}${(emp.status||'').toUpperCase()==='HIRED'&&(!emp.jobOffer||!emp.bgClear)?'<span title="Status is HIRED but Offer or BG not checked" style="margin-left:5px;color:#F05252;font-size:11px;cursor:default;">⚠</span>':''}</td>
       <td class="name-cell" style="cursor:pointer;" data-eid="${emp.id}" onclick="ob_openInfoModal(this.dataset.eid)">
         <div style="font-weight:600;font-size:15px;">${ob_cap(emp.name)}${dupeTag}</div>
         <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
@@ -5947,11 +5951,11 @@ function ob_toggleCheck(id, field) {
 
   // Auto-advance status when key milestones are checked ON
   if (emp[field]) {
-    const STATUS_RANK = { '': 0, 'NO': 1, 'NO SHOW': 2, 'ZOOM': 3, 'SCHEDULED': 4, 'PENDING': 5, 'YES': 6, 'QUIT': 7, 'HIRED': 8 };
+    const STATUS_RANK = { '': 0, 'NO': 1, 'NO SHOW': 2, 'ZOOM': 3, 'SCHEDULED': 4, 'PENDING': 5, 'YES': 6, 'OFFER SENT': 7, 'QUIT': 8, 'HIRED': 9 };
     const curRank = STATUS_RANK[(emp.status || '').trim().toUpperCase()] ?? 0;
 
     const autoStatus = field === 'infoCall' ? 'Zoom'
-                     : field === 'jobOffer'  ? 'YES'
+                     : field === 'jobOffer'  ? 'Offer Sent'
                      : field === 'bgClear'   ? 'Hired'
                      : null;
 
@@ -6004,6 +6008,24 @@ function ob_toggleCheck(id, field) {
         text: decodeURIComponent(ob_SKOOL_MSG),
         dynamic: false
       }]);
+    } else {
+      ob_showToast(`⚠ No phone number on file for ${ob_cap(emp.name)}`);
+    }
+  }
+
+  // Chat (Pronto) checked ON → Google Chat SMS
+  if (field === 'pronto' && emp[field]) {
+    if (emp.mobile) {
+      ob_sendChatSMS(emp);
+    } else {
+      ob_showToast(`⚠ No phone number on file for ${ob_cap(emp.name)}`);
+    }
+  }
+
+  // Squad Assign checked ON → squad intro SMS
+  if (field === 'squadAssign' && emp[field]) {
+    if (emp.mobile) {
+      ob_sendSquadSMS(emp);
     } else {
       ob_showToast(`⚠ No phone number on file for ${ob_cap(emp.name)}`);
     }
@@ -6065,7 +6087,7 @@ function ob_bgClearToRoster(emp) {
 }
 
 // ── EDIT CELL ──────────────────────────────────────────────────────────────
-const ob_STATUS_OPTIONS = ['YES','Hired','Quit','Pending','Scheduled','No Show','Zoom','NO'];
+const ob_STATUS_OPTIONS = ['YES','Offer Sent','Hired','Quit','Pending','Scheduled','No Show','Zoom','NO'];
 
 function ob_editStatusCell(td, id) {
   if (td.querySelector('select')) return;
@@ -6128,7 +6150,19 @@ function ob_commitSelectEdit(sel, id, field) {
   emp[field] = sel.value;
   if (emp[field] !== prev) {
     ob_showToast(`✓ ${ob_cap(emp.name)} — ${field} → ${sel.value || 'cleared'}`);
-    if (field === 'status') sheetsSaveStatus(emp);
+    if (field === 'status') {
+      sheetsSaveStatus(emp);
+      // Offer Sent → auto-check jobOffer and fire SMS if not already sent
+      if (sel.value.toUpperCase() === 'OFFER SENT' && !emp.jobOffer) {
+        emp.jobOffer = true;
+        sheetsSaveCheckbox(emp, 'jobOffer');
+        if (emp.mobile) {
+          ob_sendJobOfferSMS(emp);
+        } else {
+          ob_showToast(`⚠ No phone number on file for ${ob_cap(emp.name)}`);
+        }
+      }
+    }
   }
   ob_renderTable();
 }
@@ -7359,13 +7393,14 @@ function squadRowToEntry(r) {
   var squad = String(r['squad'] || r['squad name'] || '');
   if (!squad) return null;
   return {
-    squad:      squad,
-    leader:     String(r['leader'] || ''),
-    email:      String(r['email'] || '').toLowerCase().trim(),
-    weekly_sra: parseInt(r['weekly sra goal'] || r['weekly sra'] || r['weekly_sra'] || 0) || 0,
-    weekly_ic:  parseInt(r['weekly ic goal']  || r['weekly ic']  || r['weekly_ic']  || 0) || 0,
-    qtr_sra:    parseInt(r['quarter sra goal'] || r['qtr sra goal'] || r['qtr sra'] || r['qtr_sra'] || 0) || 0,
-    qtr_ic:     parseInt(r['quarter ic goal']  || r['qtr ic goal']  || r['qtr ic']  || r['qtr_ic']  || 0) || 0
+    squad:         squad,
+    leader:        String(r['leader'] || ''),
+    email:         String(r['email'] || '').toLowerCase().trim(),
+    leader_mobile: String(r['leader_mobile'] || r['leader mobile'] || '').replace(/\D/g,''),
+    weekly_sra:    parseInt(r['weekly sra goal'] || r['weekly sra'] || r['weekly_sra'] || 0) || 0,
+    weekly_ic:     parseInt(r['weekly ic goal']  || r['weekly ic']  || r['weekly_ic']  || 0) || 0,
+    qtr_sra:       parseInt(r['quarter sra goal'] || r['qtr sra goal'] || r['qtr sra'] || r['qtr_sra'] || 0) || 0,
+    qtr_ic:        parseInt(r['quarter ic goal']  || r['qtr ic goal']  || r['qtr ic']  || r['qtr_ic']  || 0) || 0
   };
 }
 
@@ -9856,12 +9891,16 @@ function xii_fmtPhone(raw) {
   return raw || '';
 }
 
-// ── JOB OFFER SMS ────────────────────────────────────────────────────────────
+// ── JOB OFFER SMS ─────────────────────────────────────────────────────────────
+// Fires when Offer checkbox is checked OR status is set to Offer Sent.
+// Uses ADMIN_DISPLAY_NAME and HR_SMS_NUMBER from CONSUL_CONFIG.
 function ob_sendJobOfferSMS(emp) {
-  const name   = ob_cap(emp.name) || 'there';
-  const leader = ob_cap(emp.leader) || 'your leader';
-  const phone  = emp.mobile || '';
-  const text   = `Welcome to the team ${name}! The next step is giving authorization for a background check to be run, and filling out the I9 form. One tricky thing about this form is it asks you to put in the email of an authorized Sunrun representative. What they really mean is to put in the email address of someone you trust and authorize to look at your ID and upload pictures of them on their phone. Pick someone close by that you see regularly. (If you get stuck, you can reach out to ${leader} and you can show them your IDs.)`;
+  const name      = ob_cap(emp.name) || 'there';
+  const phone     = emp.mobile || '';
+  const adminFull = ADMIN_DISPLAY_NAME || 'Admin';
+  const adminFirst = adminFull.split(' ')[0];
+  const hrNum     = HR_SMS_NUMBER || '';
+  const text = `Hi, this is ${adminFirst}, the Sunrun Admin for your local office. I see that your interview went well and the leaders want to hire you. You should be getting an email from Workday that walks you through the 16 onboarding steps. The most important two to do first are the Background Check authorization form and the I-9 form. The I-9 form has confusing instructions — don't get stuck. Have a friend or family member be the person you designate as your authorized representative to view and upload your forms of ID. It should NOT be a Sunrun employee doing that. If you have questions, please reply to me or text HR at ${hrNum}. Once you have submitted those documents, it will take 3-7 days to get your Sunrun logins from OKTA. Be on the lookout for that email. Congratulations and have fun with those 16 steps to onboarding 😆 ${adminFull}`;
   xii_sendSMS([{
     toLabel: name,
     phone: xii_fmtPhone(phone),
@@ -9870,65 +9909,61 @@ function ob_sendJobOfferSMS(emp) {
   }]);
 }
 
-// ── BG CLEAR — 4 SMS MESSAGES ────────────────────────────────────────────────
-// OFFICE_MEETING_INFO, ADAM_PHONE, ADAM_EMAIL are defined at top via CONSUL_CONFIG aliases
-
+// ── BG CLEAR SMS ──────────────────────────────────────────────────────────────
+// Fires when BG checkbox is checked. Replaces old 4-message sequence.
+// Pulls meeting info from OFFICE_MEETING_INFO keyed by the rep's office.
 function ob_sendBGClearSMS(emp) {
-  const name    = ob_cap(emp.name) || 'New Hire';
-  const leader  = ob_cap(emp.leader) || 'their leader';
-  const office  = emp.office || '';
-  const phone   = emp.mobile || '';
-  const email   = emp.email  || emp.homeEmail || '';
+  const name       = ob_cap(emp.name) || 'there';
+  const phone      = emp.mobile || '';
+  const office     = emp.office || '';
+  const adminFull  = ADMIN_DISPLAY_NAME || 'Admin';
+  const adminFirst = adminFull.split(' ')[0];
+  const mtg        = OFFICE_MEETING_INFO[office] || Object.values(OFFICE_MEETING_INFO)[0] || {};
+  const days    = mtg.days    || 'TBD';
+  const time    = mtg.time    || 'TBD';
+  const address = mtg.address || 'TBD';
+  const text = `Congratulations, your background check was approved and you should have a Sunrun login from OKTA in your inbox. Once you sign in to OKTA, you can order uniforms in the RunX Store, start training at RunX Learning, and log hours worked in Workday. You should also start coming to our meetings. The meetings are at ${address} on ${days} at ${time}. Text me back if you have any questions. - ${adminFirst}`;
+  xii_sendSMS([{
+    toLabel: name,
+    phone: xii_fmtPhone(phone),
+    text,
+    dynamic: false
+  }]);
+}
 
-  // Get Jaxon Junior's number from Roster
-  const jaxon = ROSTER_EMPLOYEES.find(r =>
-    (r.name || '').toLowerCase().includes('jaxon') &&
-    (r.name || '').toLowerCase().includes('junior')
-  );
-  const jaxonPhone = jaxon ? xii_fmtPhone(jaxon.mobile || jaxon.phone || '') : '';
-  const jaxonLabel = jaxon ? `Jaxon Junior${jaxonPhone ? '' : ' (no number in Roster)'}` : 'Jaxon Junior (not found in Roster)';
+// ── CHAT (PRONTO) SMS ─────────────────────────────────────────────────────────
+// Fires when Chat checkbox is checked.
+function ob_sendChatSMS(emp) {
+  const name  = ob_cap(emp.name) || 'there';
+  const phone = emp.mobile || '';
+  const text  = `You have been added to the office Google Chat space. Download Google Chat from the app store and sign in using your Sunrun credentials.`;
+  xii_sendSMS([{
+    toLabel: name,
+    phone: xii_fmtPhone(phone),
+    text,
+    dynamic: false
+  }]);
+}
 
-  // Meeting info by office
-  const mtg = OFFICE_MEETING_INFO[office] || OFFICE_MEETING_INFO['Orange County'];
-  const meetingText = `Hey ${name}! Welcome aboard 🎉 Your first team meeting is ${mtg.days} from ${mtg.time} at ${mtg.address}. See you there!`;
-
-  // 3-way intro — dynamic via Claude
-  const introPrompt = `Write a warm, brief 3-way SMS introduction. You are Adam Howle, a sales manager at Sunrun. You are introducing a new hire named ${name} to their leader ${leader}. Keep it casual and enthusiastic, under 120 words. Format: address both people, introduce them to each other, express excitement about ${name} joining the team. No hashtags, no emojis except maybe 1.`;
-
-  // SMS to Adam
-  const adamText = `${name} — ${xii_fmtPhone(phone)}`;
-
-  // SMS to Jaxon
-  const jaxonText = `${name} — ${email}`;
-
-  const messages = [
-    {
-      toLabel: name,
-      phone: xii_fmtPhone(phone),
-      text: meetingText,
-      dynamic: false
-    },
-    {
-      toLabel: `${name} + ${leader} (3-way intro)`,
-      phone: xii_fmtPhone(phone),
-      text: introPrompt,
-      dynamic: true
-    },
-    {
-      toLabel: `Adam Howle`,
-      phone: xii_fmtPhone(ADAM_PHONE),
-      text: adamText,
-      dynamic: false
-    },
-    {
-      toLabel: jaxonLabel,
-      phone: jaxonPhone,
-      text: jaxonText,
-      dynamic: false
-    },
-  ];
-
-  xii_sendSMS(messages);
+// ── SQUAD ASSIGN SMS ──────────────────────────────────────────────────────────
+// Fires when Squad Assign checkbox is checked.
+// Pulls squad name, leader name, and leader mobile from SQUAD_DB.
+function ob_sendSquadSMS(emp) {
+  const name        = ob_cap(emp.name) || 'there';
+  const phone       = emp.mobile || '';
+  const squadKey    = emp.squad || emp.leader || '';
+  const squadData   = SQUAD_DB[squadKey] || {};
+  const squadName   = squadKey || 'your squad';
+  const leaderName  = ob_cap(squadData.leader || squadKey || 'your leader');
+  const leaderMobile = squadData.leader_mobile || '';
+  const leaderDisplay = leaderMobile ? xii_fmtPhone(leaderMobile) : '(see your leader)';
+  const text = `You have been added to ${squadName}. Your leader is ${leaderName} and their number is ${leaderDisplay}. Please reach out to them to schedule a shadow shift.`;
+  xii_sendSMS([{
+    toLabel: name,
+    phone: xii_fmtPhone(phone),
+    text,
+    dynamic: false
+  }]);
 }
 </script>
 
