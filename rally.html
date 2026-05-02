@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="rp-icon-180.png">
 <!--
   ═══════════════════════════════════════════════════════════════════
-  RALLY POINT — v2.33 — 2026-04-28
+  RALLY POINT — v2.34 — 2026-04-28
   Approved design · April 2026
   ───────────────────────────────────────────────────────────────────
   This file is the approved reference implementation of the Me screen.
@@ -1825,7 +1825,7 @@ body {
     <!-- Firebase reCAPTCHA container (invisible) -->
     <div id="rp-recaptcha" style="position:fixed;bottom:0;left:0;visibility:hidden;pointer-events:none;"></div>
     <div class="rp-login-sub" style="margin-top:16px;">Rally Point · Sunrun</div>
-    <div class="rp-login-sub" style="margin-top:8px;opacity:0.5;">v2.33</div>
+    <div class="rp-login-sub" style="margin-top:8px;opacity:0.5;">v2.34</div>
   </div>
 </div>
 
@@ -3922,7 +3922,7 @@ function rnkTogglePin(e) {
 
     <!-- Footer -->
     <div class="drw-footer">
-      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.33</div>
+      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.34</div>
       <div class="drw-footer-item" onclick="drwOpen('help')">
         <div class="drw-item-icon">❓</div>
         <div class="drw-footer-label">Help &amp; Feedback</div>
@@ -4368,7 +4368,7 @@ function rnkTogglePin(e) {
     </div>
     <div class="pref-card">
       <div class="pref-card-label">App Version</div>
-      <div style="font-size:12px;color:#888780;">Rally Point v2.33 · April 2026</div>
+      <div style="font-size:12px;color:#888780;">Rally Point v2.34 · April 2026</div>
     </div>
   </div>
   <div class="sub-screen-nav">
@@ -4458,7 +4458,7 @@ function rnkTogglePin(e) {
     </div>
 
     <!-- Input bar -->
-    <div style="flex-shrink:0;background:#fff;border-top:1px solid #E0DDD6;padding:10px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:7px;position:relative;z-index:20;">
+    <div style="flex-shrink:0;background:#fff;border-top:1px solid #E0DDD6;padding:10px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:7px;">
       <!-- Hidden file inputs -->
       <input type="file" id="chat-img-library" accept="image/*" style="display:none" onchange="chatHandleImageFile(this)">
       <input type="file" id="chat-img-camera"  accept="image/*" capture="environment" style="display:none" onchange="chatHandleImageFile(this)">
@@ -4897,12 +4897,13 @@ function rnkTogglePin(e) {
 /* + reaction trigger — small circle bubble */
 .chat-more-btn {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 28px; height: 28px; border-radius: 50%;
+  width: 22px; height: 22px; border-radius: 50%;
   background: #ECEAE6; border: 1.5px solid #E0DDD6;
-  font-size: 17px; font-weight: 400; color: #888780; line-height: 1;
-  cursor: pointer; -webkit-user-select: none;
+  font-size: 15px; font-weight: 400; color: #888780; line-height: 1;
+  cursor: pointer; -webkit-user-select: none; flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.1s, border-color 0.12s;
+  vertical-align: middle; margin-left: 4px;
 }
 .chat-more-btn:active { background: #D8D5D0; border-color: #B4B2A9; color: #444441; }
 
@@ -6931,6 +6932,8 @@ function chatRenderMessages(docs) {
 
   docs.forEach((doc, idx) => {
     const d      = doc.data();
+    /* Skip completely empty messages — no text, no image, no file */
+    if (!d.text && !d.imageUrl && !d.fileUrl) return;
     const msgId  = doc.id;
     const ts     = d.ts ? d.ts.toDate() : new Date();
     const date   = ts.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
@@ -7026,7 +7029,10 @@ function chatRenderMessages(docs) {
             <span class="chat-msg-time">${time}</span>
           </div>` : ''}
           ${replyHTML}
-          <div class="chat-msg-text" id="msg-text-${msgId}">${_esc(d.text||'').replace(/\n/g,'<br>')}</div>
+          <div style="display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap;">
+            <div class="chat-msg-text" id="msg-text-${msgId}">${_esc(d.text||'').replace(/\n/g,'<br>')}</div>
+            <span class="chat-more-btn" onclick="chatShowActionSheet('${msgId}','${_esc(d.senderName||'')}','${actionPreview}','${sEmail}')">+</span>
+          </div>
           ${d.imageUrl
             ? `<img class="chat-msg-img" src="${d.imageUrl}" alt="image" onclick="chatLightboxOpen('${d.imageUrl}')" loading="lazy">`
             : d.fileUrl && !d.isImage
@@ -7043,7 +7049,6 @@ function chatRenderMessages(docs) {
           ${editWrap}
           <div class="chat-msg-footer">
             ${activeReacts ? `<div class="chat-react-existing">${activeReacts}</div>` : ''}
-            <span class="chat-more-btn" onclick="chatShowActionSheet('${msgId}','${_esc(d.senderName||'')}','${actionPreview}','${sEmail}')">+</span>
           </div>
         </div>
       </div>
