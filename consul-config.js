@@ -37,6 +37,9 @@ const CONSUL_CONFIG = {
   office_admin_email:   'admin@sunrun.com',          // ← UPDATE
   office_admin_phone:   '0000000000',                // ← UPDATE
 
+  admin_display_name:   'Admin Name',                // ← UPDATE — used in onboarding SMS sign-off
+  hr_sms_number:        '(000) 000-0000',            // ← UPDATE — HR text number for I-9/BG help
+
   // ── Offices ────────────────────────────────────────────────────────────────
   // ← UPDATE for each new region — primary offices and comparison offices
   offices:          ['Orange County', 'Newport Beach'],
@@ -51,7 +54,7 @@ const CONSUL_CONFIG = {
   },
 
   // ── Meeting Info ───────────────────────────────────────────────────────────
-  // ← UPDATE per office — displayed on the roster/overview if implemented
+  // ← UPDATE per office — used in BG Clear SMS to tell new hires when/where meetings are
   office_meeting_info: {
     'Orange County': { days: '', time: '', address: '' },  // ← UPDATE
     'Newport Beach': { days: '', time: '', address: '' },  // ← UPDATE
@@ -63,28 +66,21 @@ const CONSUL_CONFIG = {
   calendar_src: 'https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FLos_Angeles&showPrint=0&src=Y19hYTdhNGFiZTBhZmM5NjY3OGYyOWI0MGQxYzE4YWI4ZWZiMmQxNGU1M2UxNTc3ZDlmMTQxMTMyNjQwMTNhYzE4QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=Y18yMjM2NGFhMzkyOGU0ZmZiZDNlM2U5MTBjNjk3M2E0NmFlZDk5OWJjZjk5NDYzYjk0ZTA2MjA2Y2Y1YWFhNjBjQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23d50000&color=%23f4511e',
 
   // ── Skin / Accent Colors ───────────────────────────────────────────────────
-  // Sunrun Night Palette — dark navy base, sky blue brand accent, orange warm secondary.
-  // Semantic colors (green #2DC48E, red #F05252, amber #EF9F27) and rank colors
-  // (gold #F0C030, franchise amber #EF9F27, level greens/teals) are NOT overridden
-  // here — they are universal and defined in the dashboard CSS.
   accent: {
-    // Dark mode
-    cyan_light:        '#A5C9FF',   // Sky Blue   — active states, highlights, positive values
-    cyan_dark:         '#49517D',   // Light Navy — labels, column headers, secondary UI
-    near_black:        '#1F2647',   // Dark Navy  — page background
-    off_white:         '#FFFBF0',   // Off-White  — primary text
-    sand:              '#EE8C66',   // Orange     — view buttons, warm accent
-    border:            'rgba(165,201,255,0.2)',   // Sky Blue tinted border
-    row_hover:         'rgba(165,201,255,0.08)',  // Sky Blue tinted row hover
-
-    // Light mode
-    light_cyan_light:  '#A5C9FF',   // Sky Blue unchanged (swatch dots)
-    light_cyan_dark:   '#1F2647',   // Dark Navy for contrast on cream
-    light_near_black:  '#FFFBF0',   // Off-White as light mode page bg
-    light_off_white:   '#1A1718',   // Near-black text on cream bg
-    light_sand:        '#B45A1E',   // Darkened orange for contrast on cream
-    light_border:      'rgba(31,38,71,0.2)',      // Dark Navy tinted border
-    light_row_hover:   'rgba(31,38,71,0.06)',     // Dark Navy tinted row hover
+    cyan_light:        '#A5C9FF',
+    cyan_dark:         '#49517D',
+    near_black:        '#1F2647',
+    off_white:         '#FFFBF0',
+    sand:              '#EE8C66',
+    border:            'rgba(165,201,255,0.2)',
+    row_hover:         'rgba(165,201,255,0.08)',
+    light_cyan_light:  '#A5C9FF',
+    light_cyan_dark:   '#1F2647',
+    light_near_black:  '#FFFBF0',
+    light_off_white:   '#1A1718',
+    light_sand:        '#B45A1E',
+    light_border:      'rgba(31,38,71,0.2)',
+    light_row_hover:   'rgba(31,38,71,0.06)',
   },
 
 };
@@ -92,18 +88,20 @@ const CONSUL_CONFIG = {
 // ══════════════════════════════════════════════════════════════════════════════
 // DEPLOYMENT CHECKLIST — new office setup
 //
-//  1. sheets_id          → customer's Google Sheet ID
-//  2. oauth_client_id    → customer's Google Cloud project OAuth client
-//  3. admin_email        → delete notification recipient
-//  4. admin_phone        → SMS alert recipient (Textbelt)
-//  5. office_admin_email → same as admin or separate office contact
-//  6. office_admin_phone → same as admin or separate office contact
-//  7. offices            → customer's office names (must match Sheet data exactly)
-//  8. compare_offices    → offices to include in comparison view
-//  9. office_colors      → update keys to match new office names
-// 10. office_meeting_info → update keys and values to match new offices
-// 11. calendar_src       → customer's Google Calendar embed URL, or set null
-// 12. SQUAD_DB           → update in index.html with customer's squad names/leaders
-// 13. tagline            → optional — update if customer has their own culture phrase
-// 14. brand              → optional — update if customer has a team/office brand name
+//  1. sheets_id            → customer's Google Sheet ID
+//  2. oauth_client_id      → customer's Google Cloud project OAuth client
+//  3. admin_email          → delete notification recipient
+//  4. admin_phone          → SMS alert recipient (Textbelt)
+//  5. office_admin_email   → same as admin or separate office contact
+//  6. office_admin_phone   → same as admin or separate office contact
+//  7. admin_display_name   → full name used in onboarding SMS sign-off
+//  8. hr_sms_number        → HR text number shown in I-9/BG SMS
+//  9. offices              → customer's office names (must match Sheet data exactly)
+// 10. compare_offices      → offices to include in comparison view
+// 11. office_colors        → update keys to match new office names
+// 12. office_meeting_info  → days, time, address per office for BG Clear SMS
+// 13. calendar_src         → customer's Google Calendar embed URL, or set null
+// 14. SQUAD_DB             → update in index.html with customer's squad names/leaders
+// 15. tagline              → optional — update if customer has their own culture phrase
+// 16. brand                → optional — update if customer has a team/office brand name
 // ══════════════════════════════════════════════════════════════════════════════
