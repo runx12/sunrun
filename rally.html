@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="rp-icon-180.png">
 <!--
   ═══════════════════════════════════════════════════════════════════
-  RALLY POINT — v2.34 — 2026-04-28
+  RALLY POINT — v2.35 — 2026-04-28
   Approved design · April 2026
   ───────────────────────────────────────────────────────────────────
   This file is the approved reference implementation of the Me screen.
@@ -1825,7 +1825,7 @@ body {
     <!-- Firebase reCAPTCHA container (invisible) -->
     <div id="rp-recaptcha" style="position:fixed;bottom:0;left:0;visibility:hidden;pointer-events:none;"></div>
     <div class="rp-login-sub" style="margin-top:16px;">Rally Point · Sunrun</div>
-    <div class="rp-login-sub" style="margin-top:8px;opacity:0.5;">v2.34</div>
+    <div class="rp-login-sub" style="margin-top:8px;opacity:0.5;">v2.35</div>
   </div>
 </div>
 
@@ -3922,7 +3922,7 @@ function rnkTogglePin(e) {
 
     <!-- Footer -->
     <div class="drw-footer">
-      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.34</div>
+      <div style="padding:8px 20px 4px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--rp-muted);text-align:center;">Rally Point v2.35</div>
       <div class="drw-footer-item" onclick="drwOpen('help')">
         <div class="drw-item-icon">❓</div>
         <div class="drw-footer-label">Help &amp; Feedback</div>
@@ -4368,7 +4368,7 @@ function rnkTogglePin(e) {
     </div>
     <div class="pref-card">
       <div class="pref-card-label">App Version</div>
-      <div style="font-size:12px;color:#888780;">Rally Point v2.34 · April 2026</div>
+      <div style="font-size:12px;color:#888780;">Rally Point v2.35 · April 2026</div>
     </div>
   </div>
   <div class="sub-screen-nav">
@@ -4937,6 +4937,14 @@ function rnkTogglePin(e) {
 /* ── DRAWER ── */
 function openDrawer(e) {
   if (e) e.stopPropagation();
+  /* Close any open chat sheets that might block drawer interaction */
+  const straySheets = ['chat-compose-sheet', 'chat-img-picker-sheet', 'chat-action-sheet-el'];
+  straySheets.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  /* Also close any dynamically created action sheets */
+  document.querySelectorAll('.chat-action-sheet').forEach(el => el.remove());
   document.getElementById('drw-overlay').classList.add('open');
 }
 function drwCloseDrawer(e) {
@@ -5252,6 +5260,17 @@ const _fbApp  = firebase.initializeApp(RP_FIREBASE_CONFIG);
 const _fbAuth = firebase.auth();
 const _fbDB   = firebase.firestore();
 const _fbStorage = firebase.storage();
+
+/* Enable offline persistence — caches data locally so the app loads
+   faster on repeat visits and works with spotty connections */
+_fbDB.enablePersistence({ synchronizeTabs: true })
+  .catch(err => {
+    if (err.code === 'failed-precondition') {
+      console.warn('[RP] Firestore persistence unavailable (multiple tabs open)');
+    } else if (err.code === 'unimplemented') {
+      console.warn('[RP] Firestore persistence not supported in this browser');
+    }
+  });
 
 /* reCAPTCHA for phone auth */
 let _recaptchaVerifier = null;
@@ -6540,11 +6559,48 @@ function rpRenderOffice() {
    LOADING / ERROR SCREENS
    ═══════════════════════════════════════════════════════════════════ */
 function rpShowLoadingScreen() {
-  /* TODO: show a loading state on the current visible phone */
   console.log('Loading data...');
+  /* Show the welcome screen image as a full-screen loading overlay */
+  let overlay = document.getElementById('rp-loading-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'rp-loading-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9000;background:#1F2647;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+    /* Clone the login background image */
+    const loginBg = document.getElementById('rp-login-bg');
+    if (loginBg) {
+      const bgClone = loginBg.cloneNode(true);
+      bgClone.style.cssText = 'position:absolute;inset:0;overflow:hidden;';
+      overlay.appendChild(bgClone);
+    }
+    /* Dark gradient overlay so spinner is visible */
+    const grad = document.createElement('div');
+    grad.style.cssText = 'position:absolute;inset:0;background:linear-gradient(to bottom,rgba(31,38,71,0.3),rgba(31,38,71,0.7));';
+    overlay.appendChild(grad);
+    /* Spinner */
+    const spinWrap = document.createElement('div');
+    spinWrap.style.cssText = 'position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:16px;';
+    spinWrap.innerHTML = `
+      <div style="width:36px;height:36px;border:3px solid rgba(67,232,191,0.3);border-top-color:#43E8BF;border-radius:50%;animation:rp-spin 0.8s linear infinite;"></div>
+      <div style="font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7);">Loading…</div>
+    `;
+    overlay.appendChild(spinWrap);
+    /* Inject spinner animation if not already present */
+    if (!document.getElementById('rp-spin-style')) {
+      const style = document.createElement('style');
+      style.id = 'rp-spin-style';
+      style.textContent = '@keyframes rp-spin { to { transform: rotate(360deg); } }';
+      document.head.appendChild(style);
+    }
+    document.body.appendChild(overlay);
+  }
+  overlay.style.display = 'flex';
 }
 function rpHideLoadingScreen() {
   console.log('Data loaded.');
+  /* Remove loading overlay */
+  const overlay = document.getElementById('rp-loading-overlay');
+  if (overlay) overlay.style.display = 'none';
   rpHideLoginScreen();
   /* Hide backdoor sign-in — data loaded successfully */
   const sr = document.getElementById('drw-signin-row');
