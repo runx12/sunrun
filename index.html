@@ -2681,6 +2681,11 @@ function getTarget(prefix, cat, office) {
   }
   const el = document.getElementById(`${prefix}-target-${cat}`);
   if (el) { const v = parseInt(el.value); if (!isNaN(v) && v > 0) return v; }
+  // No office arg = primary office. Use per-office sheet targets if loaded, then flat fallback.
+  const primaryOffice = CONSUL_CONFIG.offices[0];
+  const officeMap = prefix === 'wtd' ? OFFICE_WTD_TARGETS : OFFICE_QTD_TARGETS;
+  const perOfficeVal = (officeMap[primaryOffice] || {})[cat];
+  if (perOfficeVal) return perOfficeVal;
   return (prefix === 'wtd' ? WTD_TARGETS : QTD_TARGETS)[cat];
 }
 
