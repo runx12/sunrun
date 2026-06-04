@@ -39,43 +39,48 @@
 }
 /* ── LIGHT MODE ── */
 body.light-mode {
-  --cyan-light: #AADDDD;
-  --cyan-dark: #1D5557;
-  --near-black: #F0EDE8;
-  --sand: #8B5E20;
-  --wine: #5C3D1E;
-  --off-white: #1A1718;
-  --text-muted: rgba(26,23,24,0.52);
-  --border: rgba(45,102,104,0.22);
-  --row-hover: rgba(45,102,104,0.06);
-  --card-bg: rgba(0,0,0,0.04);
-  --r-franchise: #EF9F27;
-  --r-premier:   #7A5800;
-  --r-l3:        #3A8082;
-  --r-l2:        #1D5557;
-  --r-l1:        #0F7A52;
-  --r-combine:   #666666;
-  --r-nostatus:  rgba(26,23,24,0.3);
-  --btn-idle: #5A5755;
-  --btn-border-idle: rgba(90,87,85,0.45);
+  --cyan-light:      #1C1C1E;
+  --cyan-dark:       #1C1C1E;
+  --near-black:      #F0EDE8;
+  --sand:            #1C1C1E;
+  --wine:            #5C3D1E;
+  --off-white:       #1A1718;
+  --text-muted:      rgba(26,23,24,0.52);
+  --border:          rgba(0,0,0,0.10);
+  --row-hover:       rgba(0,0,0,0.03);
+  --card-bg:         rgba(0,0,0,0.04);
+  --r-franchise:     #EF9F27;
+  --r-premier:       #7A5800;
+  --r-l3:            #3A8082;
+  --r-l2:            #1D5557;
+  --r-l1:            #0F7A52;
+  --r-combine:       #666666;
+  --r-nostatus:      rgba(26,23,24,0.3);
+  --btn-idle:        #1C1C1E;
+  --btn-border-idle: rgba(28,28,30,0.30);
+  --v-exceeds:       #1C1C1E;
+  --v-exceeds-glow:  rgba(45,196,142,0.0);
   color-scheme: light;
 }
 body.light-mode { background: #E7E5E4; color: #1A1718; }
-/* ── Cards keep dark bg in light mode — force light text inside them ── */
+/* ── Overview progress cards — light bg, dark text ── */
 body.light-mode .prog-card,
 body.light-mode .prog-card .prog-cat,
 body.light-mode .prog-card .prog-num-val,
 body.light-mode .prog-card .prog-num-lbl,
-body.light-mode .prog-card .prog-ou { color: #F8F9F9; }
-body.light-mode .prog-card .prog-num-val.dim { color: rgba(248,249,249,0.5); }
-body.light-mode .prog-card .prog-track { background: rgba(255,255,255,0.08); }
-body.light-mode .prog-card .prog-tick { background: rgba(248,249,249,0.4); }
-body.light-mode .prog-card .prog-ou span.neg { color: #F05252; }
-body.light-mode .prog-card .prog-ou span.pos { color: #2DC48E; }
-body.light-mode .overview-target-input { color: #F8F9F9; }
-body.light-mode .roster-card { color: #F8F9F9; }
-body.light-mode .roster-card .rc-name { color: #F8F9F9; }
-body.light-mode .roster-card .rc-role { color: var(--cyan-light); }
+body.light-mode .prog-card .prog-ou { color: #1C1C1E; }
+body.light-mode .prog-card .prog-num-val.dim { color: rgba(28,28,30,0.35); }
+body.light-mode .prog-card .prog-track { background: rgba(0,0,0,0.10); }
+body.light-mode .prog-card .prog-tick { background: rgba(28,28,30,0.25); }
+body.light-mode .prog-card .prog-ou span.neg { color: #C0392B; }
+body.light-mode .prog-card .prog-ou span.pos { color: #0F7A52; }
+body.light-mode .prog-card .prog-num-val.dim { color: rgba(28,28,30,0.30); }
+body.light-mode .prog-ou-dim { color: rgba(28,28,30,0.40); }
+body.light-mode .overview-target-input { color: #1C1C1E; }
+/* ── Roster cards — light bg, dark text ── */
+body.light-mode .roster-card { color: #1C1C1E; }
+body.light-mode .roster-card .rc-name { color: #1C1C1E; }
+body.light-mode .roster-card .rc-role { color: #6E6E73; }
 body.light-mode .rc-edit-field { color: var(--off-white); background: rgba(0,0,0,0.08); }
 body.light-mode .search-wrap input { color: var(--off-white); background: rgba(0,0,0,0.08); }
 /* ── WTD GOALS PANEL ── */
@@ -176,6 +181,7 @@ body.light-mode .search-wrap input { color: var(--off-white); background: rgba(0
 .rm-stat { background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:14px 16px; }
 .rm-stat-val { font-family:Helvetica Neue,Helvetica,Arial,sans-serif; font-size:26px; font-weight:700; color:var(--off-white); line-height:1; }
 .rm-stat-val.exceeds { color:var(--v-exceeds); text-shadow:0 0 10px var(--v-exceeds-glow); }
+body.light-mode .rm-stat-val.exceeds { color:#1C1C1E; font-weight:900; text-shadow:none; background:rgba(45,196,142,0.18); padding:2px 6px; }
 .rm-stat-val.nil { color:rgba(248,249,249,0.18); }
 .rm-stat-label { font-family:Helvetica Neue,Helvetica,Arial,sans-serif; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-top:6px; }
 .rm-stat-goal { font-family:Helvetica Neue,Helvetica,Arial,sans-serif; font-size:10px; color:rgba(242,207,156,0.6); margin-top:2px; }
@@ -263,6 +269,8 @@ body.chrome-collapsed .tab-bar{max-height:0;opacity:0;border-bottom-color:transp
 .tab{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--btn-idle);padding:14px 22px;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap}
 .tab:hover{color:var(--cyan-light)}
 .tab.active{color:var(--cyan-light);border-bottom-color:var(--cyan-light)}
+body.light-mode .tab:hover{color:#1C1C1E}
+body.light-mode .tab.active{color:#1C1C1E;border-bottom-color:#1C1C1E}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
@@ -316,10 +324,10 @@ body.chrome-collapsed .filter-bar{max-height:0;opacity:0;border-bottom-color:tra
 .filter-btn{background:transparent;border:1px solid var(--btn-border-idle);color:var(--btn-idle);padding:7px 16px;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .15s}
 .filter-btn:hover{border-color:var(--cyan-light);color:var(--cyan-light)}
 .filter-btn.active{border-color:var(--cyan-light);color:var(--cyan-light);background:rgba(170,221,221,0.08)}
-body.light-mode .filter-btn.active{background:rgba(0,0,0,0.06);border-color:var(--cyan-light);color:var(--cyan-light)}
+body.light-mode .filter-btn{border-color:rgba(28,28,30,0.30);color:#1C1C1E}body.light-mode .filter-btn:hover{border-color:#1C1C1E;color:#1C1C1E;background:rgba(0,0,0,0.04)}body.light-mode .filter-btn.active{background:rgba(0,0,0,0.06);border-color:#1C1C1E;color:#1C1C1E}
 .view-btn{background:transparent;border:1px solid var(--btn-border-idle);color:var(--btn-idle);padding:7px 16px;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .15s}
 .view-btn:hover,.view-btn.active{border-color:var(--sand);color:var(--sand);background:rgba(242,207,156,0.08)}
-body.light-mode .view-btn.active{background:rgba(0,0,0,0.06);border-color:var(--sand);color:var(--sand)}
+body.light-mode .view-btn{border-color:rgba(28,28,30,0.30);color:#1C1C1E}body.light-mode .view-btn:hover,body.light-mode .view-btn.active{border-color:#1C1C1E;color:#1C1C1E;background:rgba(0,0,0,0.06)}
 .filter-sep{width:1px;height:20px;background:var(--border);flex-shrink:0}
 .export-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--btn-border-idle);color:var(--btn-idle);padding:7px 14px;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .15s}
 .export-btn:hover{border-color:var(--cyan-light);color:var(--cyan-light)}
@@ -352,6 +360,7 @@ td{padding:13px 12px;color:var(--off-white);white-space:nowrap;font-size:14px}
 .td-num{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;font-weight:700;text-align:center}
 /* Three value states */
 .td-num.exceeds{color:var(--v-exceeds);font-weight:900;text-shadow:0 0 8px var(--v-exceeds-glow),0 0 16px rgba(39,217,217,0.3)}
+body.light-mode .td-num.exceeds{color:#1C1C1E;font-weight:900;text-shadow:none;background:rgba(45,196,142,0.18)}
 .td-num.pos{color:var(--off-white)}
 .td-num.neg{color:var(--sand)}
 .td-num.zero{color:rgba(248,249,249,0.2)}
@@ -380,7 +389,7 @@ body.light-mode .s-premier{border-color:rgba(122,88,0,.3);background:rgba(122,88
 
 /* ── GROUP HEADER ROWS ── */
 tr.group-header td{background:rgba(255,255,255,0.04);font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan-light);padding:14px 18px;border-bottom:none;border-top:1px solid var(--border)}
-body.light-mode tr.group-header td{background:rgba(0,0,0,0.06);color:var(--cyan-dark);border-top-color:var(--border)}
+body.light-mode tr.group-header td{background:rgba(0,0,0,0.06);color:#1C1C1E;border-top-color:var(--border)}
 .col-header td{background:var(--near-black);font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:clamp(9px,.85vw,11px);font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan-dark);padding:clamp(10px,1vw,16px) clamp(12px,1.1vw,18px);border-bottom:1px solid rgba(170,221,221,0.18);border-top:none;white-space:nowrap;cursor:pointer;user-select:none;transition:background .2s}
 .col-header td:hover{color:var(--cyan-light)}
 .col-header td span.sa{opacity:.4;margin-left:4px}
@@ -527,7 +536,10 @@ body.light-mode tr.group-header td{background:rgba(0,0,0,0.06);color:var(--cyan-
 .col-toggle-btn{display:flex;align-items:center;gap:6px;background:transparent;border:0.5px solid var(--btn-border-idle);color:var(--btn-idle);padding:7px 12px;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s;white-space:nowrap}
 .col-toggle-btn:hover{border-color:var(--cyan-light);color:var(--cyan-light);background:rgba(170,221,221,0.06)}
 .col-toggle-btn.open{border-color:var(--cyan-light);color:var(--cyan-light);background:rgba(170,221,221,0.08)}
-body.light-mode .col-toggle-btn.open{background:rgba(0,0,0,0.06);border-color:var(--cyan-light);color:var(--cyan-light)}
+body.light-mode .col-toggle-btn.open{background:rgba(0,0,0,0.06);border-color:#1C1C1E;color:#1C1C1E}
+/* Pod sub-headers: sand rgba invisible on light — force muted dark */
+body.light-mode tr.pod-sub-header td{background:rgba(0,0,0,0.03)!important;border-top-color:rgba(0,0,0,0.08)!important;border-bottom-color:rgba(0,0,0,0.05)!important}
+body.light-mode tr.pod-sub-header span{color:rgba(28,28,30,0.45)!important}
 .col-dropdown{position:absolute;right:0;top:calc(100% + 4px);background:var(--near-black);border:0.5px solid rgba(170,221,221,0.25);min-width:160px;z-index:200;padding:6px 0;display:none}
 .col-dropdown.open{display:block}
 .col-dropdown-item{display:flex;align-items:center;gap:10px;padding:8px 14px;cursor:pointer;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);transition:background .1s;white-space:nowrap}
@@ -663,6 +675,14 @@ body.chrome-collapsed .rankings-stats{max-height:0;opacity:0;border-bottom-color
   accent-color: var(--cyan-light); cursor: pointer; flex-shrink: 0;
 }
 .rk-chk-item.checked { color: var(--cyan-light); }
+/* ── Light mode: rankings dropdowns ── */
+body.light-mode .rk-chk-btn { background: rgba(0,0,0,0.04); border-color: rgba(28,28,30,0.25); color: #1C1C1E; }
+body.light-mode .rk-chk-btn::after { color: #1C1C1E; }
+body.light-mode .rk-chk-btn.active-filter { border-color: #1C1C1E; color: #1C1C1E; }
+body.light-mode .rk-chk-panel { background: #F5F5F7; border-color: rgba(28,28,30,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+body.light-mode .rk-chk-item { color: rgba(28,28,30,0.65); }
+body.light-mode .rk-chk-item:hover { background: rgba(0,0,0,0.05); color: #1C1C1E; }
+body.light-mode .rk-chk-item.checked { color: #1C1C1E; }
 
 /* Scope scrolling to the rankings panel so sticky thead works — overflow on ancestor breaks sticky */
 #panel-rankings.active{display:flex;flex-direction:column;height:calc(100vh - 111px);overflow:hidden;}
@@ -690,7 +710,7 @@ body.light-mode #panel-combine th{background:var(--near-black)}
 .combine-band-row th{padding:3px 12px 0;border:none;background:var(--near-black);font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(0,0,0,0)}
 .combine-band-row th.wtd-band{color:rgba(170,221,221,0.55);border-bottom:1px solid rgba(170,221,221,0.25);padding-bottom:2px}
 body.light-mode .combine-band-row th{background:var(--near-black)}
-body.light-mode .combine-band-row th.wtd-band{color:var(--cyan-light);border-bottom-color:var(--border)}
+body.light-mode .combine-band-row th.wtd-band{color:#1C1C1E;border-bottom-color:var(--border)}
 /* Num+bar cell */
 .num-bar-cell{min-width:150px}
 .num-bar-wrap{display:flex;align-items:center;gap:7px}
@@ -766,6 +786,7 @@ body.light-mode .combine-band-row th.wtd-band{color:var(--cyan-light);border-bot
 /* ── FOOTER ── */
 .footer-bar{position:sticky;bottom:0;background:var(--near-black);border-top:1px solid var(--border);padding:11px 36px;display:flex;align-items:center;justify-content:space-between;transition:background .2s}
 .footer-count{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;color:var(--cyan-dark);text-transform:uppercase}
+body.light-mode .footer-count{color:#1C1C1E}
 .footer-brand{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;font-weight:600;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase}
 .empty-state{text-align:center;padding:60px 40px;color:var(--text-muted);font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase}
 
@@ -961,8 +982,8 @@ body.light-mode .combine-band-row th.wtd-band{color:var(--cyan-light);border-bot
   }
 body.light-mode #panel-status-incentive .filter-btn.active{
     background: rgba(0,0,0,0.06);
-    border-color: var(--cyan-light);
-    color: var(--cyan-light);
+    border-color: #1C1C1E;
+    color: #1C1C1E;
   }
 #panel-status-incentive .search-wrap{
     margin-left: auto;
@@ -1959,6 +1980,7 @@ body.light-mode #panel-onboard-employee .dash-chip.active, body.light-mode /* Le
   <div class="tab" onclick="switchTab('onboard-employee',this)">Onboard</div>
   <div class="tab" onclick="switchTab('combine',this)">Combine</div>
   <div class="tab" onclick="switchTab('productivity',this)">Productivity</div>
+  <div class="tab" onclick="switchTab('assists',this)">Assists</div>
 </div>
 
 <!-- ══ OVERVIEW ══ -->
@@ -2256,7 +2278,7 @@ body.light-mode #panel-onboard-employee .dash-chip.active, body.light-mode /* Le
 
 <!-- ── POD SNAPSHOT MODAL ── -->
 <div id="pod-snapshot-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:2100;align-items:center;justify-content:center;padding:24px;" onclick="if(event.target===this)closePodSnapshot()">
-  <div style="background:#0e0c0d;border:1px solid rgba(242,207,156,0.28);width:100%;max-width:520px;max-height:88vh;overflow:auto;position:relative;padding:24px 28px 20px;">
+  <div id="pod-snapshot-inner" style="background:#0e0c0d;border:1px solid rgba(242,207,156,0.28);width:100%;max-width:520px;max-height:88vh;overflow:auto;position:relative;padding:24px 28px 20px;">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:12px;">
       <div>
         <div id="pod-snapshot-title" style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.3px;color:var(--sand)"></div>
@@ -2821,12 +2843,18 @@ function sqGoalWTD(k, members) {
   const ic  = members.reduce((s,e)=>s+(e.wtd_ic||0),0);
   const sraGoal = g.weekly_sra;
   const icGoal  = g.weekly_ic ?? Math.round(g.qtr_ic/13*10)/10;
+  const isLight = document.body.classList.contains('light-mode');
+  const cLbl  = isLight ? '#6E6E73'              : '#AADDDD';
+  const cVal  = isLight ? '#1C1C1E'              : '#F8F9F9';
+  const cSep  = isLight ? 'rgba(28,28,30,0.25)'  : 'rgba(248,249,249,.3)';
+  const cGoal = isLight ? '#1C1C1E'              : '#F2CF9C';
+  const cGlbl = isLight ? 'rgba(28,28,30,0.40)'  : 'rgba(242,207,156,.55)';
   const m = (lbl,actl,goal) => `<span style="margin-left:24px;display:inline-flex;align-items:baseline;gap:7px">
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;letter-spacing:2px;color:#AADDDD;font-weight:600">${lbl}</span>
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;color:#F8F9F9;font-weight:600">${actl}</span>
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;color:rgba(248,249,249,.3)">/</span>
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;color:#F2CF9C">${goal}</span>
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(242,207,156,.55)">goal</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;letter-spacing:2px;color:${cLbl};font-weight:600">${lbl}</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;color:${cVal};font-weight:600">${actl}</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;color:${cSep}">/</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;color:${cGoal}">${goal}</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:${cGlbl}">goal</span>
   </span>`;
   return label + m('SRA',sra,sraGoal) + m('IC',ic,icGoal);
 }
@@ -2839,17 +2867,24 @@ function sqGoalQTD(k, members) {
   const ic  = Math.round(members.reduce((s,e)=>s+(e.qtr_ic||0),0));
   const sraGoal = g.weekly_sra * 13;
   const icGoal  = g.qtr_ic;
+  const isLight = document.body.classList.contains('light-mode');
+  const cLbl  = isLight ? '#6E6E73'              : '#AADDDD';
+  const cVal  = isLight ? '#1C1C1E'              : '#F8F9F9';
+  const cSep  = isLight ? 'rgba(28,28,30,0.25)'  : 'rgba(248,249,249,.3)';
+  const cGoal = isLight ? '#1C1C1E'              : '#F2CF9C';
+  const cGlbl = isLight ? 'rgba(28,28,30,0.40)'  : 'rgba(242,207,156,.55)';
+  const cWtd  = isLight ? 'rgba(28,28,30,0.40)'  : 'rgba(170,221,221,.45)';
   const m = (lbl,actl,goal) => `<span style="margin-left:24px;display:inline-flex;align-items:baseline;gap:7px">
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;letter-spacing:2px;color:#AADDDD;font-weight:600">${lbl}</span>
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;color:#F8F9F9;font-weight:600">${actl}</span>
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;color:rgba(248,249,249,.3)">/</span>
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;color:#F2CF9C">${goal}</span>
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(242,207,156,.55)">goal</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;letter-spacing:2px;color:${cLbl};font-weight:600">${lbl}</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;color:${cVal};font-weight:600">${actl}</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;color:${cSep}">/</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;color:${cGoal}">${goal}</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:${cGlbl}">goal</span>
   </span>`;
   const csChip = cs > 0 ? `<span style="margin-left:24px;display:inline-flex;align-items:baseline;gap:7px">
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;letter-spacing:2px;color:#AADDDD;font-weight:600">CS</span>
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;color:#F8F9F9;font-weight:600">${cs}</span>
-    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(170,221,221,.45)">wtd</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;letter-spacing:2px;color:${cLbl};font-weight:600">CS</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;color:${cVal};font-weight:600">${cs}</span>
+    <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:${cWtd}">wtd</span>
   </span>` : '';
   return label + csChip + m('SRA',sra,sraGoal) + m('IC',ic,icGoal);
 }
@@ -2890,6 +2925,7 @@ function switchTab(id, el){
   else if(id==='rankings') renderRankings();
   else if(id==='data') renderDataTab();
   else if(id==='combine') renderCombineTab();
+  else if(id==='assists') renderAssistsTab();
 
   updateFooter();
 }
@@ -3213,7 +3249,7 @@ function buildProgressCard(cat, target, actual, pace, prefix){
     : `<span class="prog-pct" style="color:rgba(248,249,249,.3);background:transparent">—</span>`;
   const paceVal = hasPace
     ? `<span class="prog-num-val dim">${Math.round(pace)}</span>`
-    : `<span class="prog-num-val dim" style="color:rgba(248,249,249,.25)">—</span>`;
+    : `<span class="prog-num-val dim">—</span>`;
   // Pace indicator: +/- number only, colour carries the meaning
   const paceIndicator = hasPace ? (() => {
     const diff = actual - Math.round(pace);
@@ -3223,7 +3259,7 @@ function buildProgressCard(cat, target, actual, pace, prefix){
   })() : '';
   const ouLine = hasPace
     ? `<div class="prog-ou">Proj. Over/Under: <span class="${ou>=0?'pos':'neg'}">${ou>=0?'+':''}${ou}</span>${paceIndicator}</div>`
-    : `<div class="prog-ou" style="color:rgba(248,249,249,.25)">Set date to calculate pace</div>`;
+    : `<div class="prog-ou prog-ou-dim">Set date to calculate pace</div>`;
   return `<div class="prog-card">
     <div class="prog-card-header"><span class="prog-cat">${cat}</span>${pctBadge}</div>
     <div class="prog-nums">
@@ -4136,7 +4172,7 @@ function renderWTD(){
     if(r.isPodHeader){
       const safePod   = r.podName.replace(/'/g,"\\'");
       const safeSquad = (r.squadKey||'').replace(/'/g,"\\'");
-      return `<tr onclick="openPodSnapshot('${safePod}','${safeSquad}')" style="cursor:pointer;">
+      return `<tr class="pod-sub-header" onclick="openPodSnapshot('${safePod}','${safeSquad}')" style="cursor:pointer;">
         <td colspan="12" style="padding:5px 18px 5px 36px;background:rgba(242,207,156,0.03);border-top:1px solid rgba(242,207,156,0.1);border-bottom:1px solid rgba(242,207,156,0.07);">
           <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(242,207,156,0.6);">⬡ ${r.podName}</span>
           <span style="font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(242,207,156,0.28);margin-left:10px;">click for snapshot</span>
@@ -6820,20 +6856,24 @@ function gc_build() {
     const id     = String(r['employee id'] || r['id'] || '').trim();
     const roster = rosterById[id] || {};
     const qtd    = QTD_MAP[id] || {};
-    const qsra   = qtd.qtdpts_sra != null ? qtd.qtdpts_sra : (qtd.qtr_sra != null ? qtd.qtr_sra : '');
-    const qic    = qtd.qtdpts_ic  != null ? qtd.qtdpts_ic  : (qtd.qtr_ic  != null ? qtd.qtr_ic  : '');
-    const sraRem = qsra !== '' ? (parseFloat(qsra) - 7) : '';
-    const icRem  = qic  !== '' ? (parseFloat(qic)  - 3) : '';
-    const name   = roster.name   || String(r['name']   || '');
-    const office = roster.office || String(r['office'] || '');
+    const qsra    = qtd.qtdpts_sra != null ? qtd.qtdpts_sra : (qtd.qtr_sra != null ? qtd.qtr_sra : '');
+    const qic     = qtd.qtdpts_ic  != null ? qtd.qtdpts_ic  : (qtd.qtr_ic  != null ? qtd.qtr_ic  : '');
+    const sraGoal = r.sra_goal != null ? r.sra_goal : 10;
+    const icGoal  = r.ic_goal  != null ? r.ic_goal  : 5;
+    const sraRem  = qsra !== '' ? (parseFloat(qsra) - sraGoal) : '';
+    const icRem   = qic  !== '' ? (parseFloat(qic)  - icGoal)  : '';
+    const name    = roster.name   || String(r['name']   || '');
+    const office  = roster.office || String(r['office'] || '');
     if (!name) return null;
     return {
       _id: i,
-      'ID':     id,
-      'Name':   name,
-      'Office': office,
-      'QSRA':   qsra !== '' ? String(qsra) : '',
-      'QIC':    qic  !== '' ? String(qic)  : '',
+      'ID':       id,
+      'Name':     name,
+      'Office':   office,
+      'QSRA':     qsra !== '' ? String(qsra) : '',
+      'QIC':      qic  !== '' ? String(qic)  : '',
+      'SRA Goal': sraGoal,
+      'IC Goal':  icGoal,
       'SRA Remaining': sraRem !== '' ? String(sraRem) : '',
       'IC Remaining':  icRem  !== '' ? String(icRem)  : '',
     };
@@ -6876,10 +6916,12 @@ function gc_renderTable() {
 
   tbody.innerHTML = gc_filteredData.map((row, i) => {
     const officeColor = SI_OFFICE_COLORS[row['Office']] || '#AADDDD';
-    const sraVal = parseFloat(row['QSRA']) || 0;
-    const icVal  = parseFloat(row['QIC'])  || 0;
-    const sraPct = Math.min(sraVal / 10 * 100, 100);
-    const icPct  = Math.min(icVal  / 10 * 100, 100);
+    const sraVal  = parseFloat(row['QSRA']) || 0;
+    const icVal   = parseFloat(row['QIC'])  || 0;
+    const sraGoal = row['SRA Goal'] || 10;
+    const icGoal  = row['IC Goal']  || 5;
+    const sraPct  = Math.min(sraVal / sraGoal * 100, 100);
+    const icPct   = Math.min(icVal  / icGoal  * 100, 100);
     const sraComplete = sraPct >= 100;
     const icComplete  = icPct  >= 100;
 
@@ -7744,7 +7786,9 @@ async function fetchSheetsData(opts) {
     var gcRows = sheetsRowsToObjects((await gcRes.json()).values || []).map(function(r) {
       var id = String(r['employee id'] || r['rep id'] || r['id'] || '').trim();
       if (!id) return null;
-      return { 'employee id': id, name: String(r['name']||''), office: shortOffice(String(r['office']||'')), qsra: r['qsra']||r['sra']||'', qic: r['qic']||r['ic']||'' };
+      var sraGoal = parseFloat(r['sra goal']||'') || null;
+      var icGoal  = parseFloat(r['ic goal'] ||'') || null;
+      return { 'employee id': id, name: String(r['name']||''), office: shortOffice(String(r['office']||'')), qsra: r['qsra']||r['sra']||'', qic: r['qic']||r['ic']||'', sra_goal: sraGoal, ic_goal: icGoal };
     }).filter(Boolean);
     if (gcRows.length) { GC_EMPLOYEES.length = 0; gcRows.forEach(function(e){ GC_EMPLOYEES.push(e); }); }
   } catch(e) { errors.push('Game Changers: ' + e.message); }
@@ -7808,7 +7852,7 @@ async function fetchSheetsData(opts) {
         QTD_EMPLOYEES.push(newTotEntry);
         QTD_MAP[id] = newTotEntry;
       }
-      if (wtdEntry && !wtdEntry.wtd_ac && ac) wtdEntry.wtd_ac = ac;
+      // wtd_ac is sourced exclusively from the Report sheet — never overwrite from Totals
       totCount++;
     });
     if (typeof buildSIFromRepPerf === 'function') { buildSIFromRepPerf(); applyFilters(); }
@@ -8733,7 +8777,9 @@ document.addEventListener('keydown', function(e) {
 
   /* Light mode adjustments */
   body.light-mode #panel-productivity { background: var(--bg); }
-  body.light-mode #panel-productivity .prod-name-row { background: rgba(35,31,32,0.04); color: var(--near-black); }
+  body.light-mode #panel-productivity .prod-name-row { background: rgba(35,31,32,0.04); color: #1C1C1E; }
+  body.light-mode #panel-productivity .prod-sra-badge { background: rgba(0,0,0,0.07); color: rgba(28,28,30,0.5); }
+  body.light-mode #panel-productivity .prod-sra-badge.sra-active { background: rgba(45,196,142,0.18); color: #0F7A52; }
   body.light-mode #panel-productivity .prod-name-row:hover { background: rgba(90,158,160,0.08); }
   body.light-mode #panel-productivity .prod-col-header.hdr-inactive { color: #fff; }
 </style>
@@ -9042,6 +9088,430 @@ function renderProductivity() {
   </div>
 
 </div><!-- end panel-combine -->
+
+
+<!-- ── ASSISTS TAB ──────────────────────────────────────────────────────────── -->
+<div class="tab-panel" id="panel-assists">
+<style>
+  #panel-assists.active {
+    display: flex; flex-direction: column;
+    height: calc(100vh - 111px); overflow: hidden;
+  }
+  body.chrome-collapsed #panel-assists.active { height: calc(100vh - 65px); }
+  #panel-assists .assists-stats      { flex-shrink: 0; }
+  #panel-assists .assists-filter-bar { flex-shrink: 0; }
+  #panel-assists .table-wrap         { flex: 1; overflow-y: auto; overflow-x: auto; padding: 0 36px; }
+  #panel-assists .footer-bar         { flex-shrink: 0; }
+
+  #assists-table thead th {
+    position: sticky; top: 0; z-index: 46;
+    background: var(--near-black);
+  }
+  body.light-mode #assists-table thead th { background: var(--near-black); color: #1C1C1E; }
+
+/* ── Light mode: all modals keep dark bg — force light text inside ── */
+body.light-mode #assists-modal,
+body.light-mode #rep-modal,
+body.light-mode #squad-snapshot-inner,
+body.light-mode #pod-snapshot-inner,
+body.light-mode #wtd-goals-panel { background: #1a1718 !important; }
+body.light-mode #pod-snapshot-inner,
+body.light-mode #pod-snapshot-inner * { color: #F5F5F7; }
+body.light-mode #pod-snapshot-inner #pod-snapshot-title { color: var(--r-franchise); }
+
+body.light-mode #assists-modal *,
+body.light-mode #rep-modal *,
+body.light-mode #squad-snapshot-inner *,
+body.light-mode #wtd-goals-panel * { color: inherit; }
+
+/* Specific text elements inside dark modals */
+body.light-mode .am-header,
+body.light-mode .am-sup,
+body.light-mode .am-name,
+body.light-mode .am-count-line,
+body.light-mode .am-row-num,
+body.light-mode .am-row-name { color: #F5F5F7; }
+body.light-mode .am-count-line span { color: #27d9d9; }
+body.light-mode .am-close-btn { color: rgba(248,249,249,0.5); border-color: rgba(170,221,221,0.12); }
+body.light-mode .am-close-btn:hover { color: #F5F5F7; }
+body.light-mode .am-row { border-bottom-color: rgba(170,221,221,0.07); }
+
+body.light-mode #rep-modal .rm-name,
+body.light-mode #rep-modal .rm-stat-label,
+body.light-mode #rep-modal .rm-stat-val,
+body.light-mode #rep-modal .rm-section-label,
+body.light-mode #rep-modal .rm-field-label,
+body.light-mode #rep-modal .rm-field-val { color: #F5F5F7; }
+
+body.light-mode #squad-snapshot-inner #squad-snapshot-title,
+body.light-mode #squad-snapshot-inner #squad-snapshot-subtitle,
+body.light-mode #squad-snapshot-inner td,
+body.light-mode #squad-snapshot-inner th { color: #F5F5F7; }
+body.light-mode #squad-snapshot-inner thead tr { border-bottom-color: rgba(170,221,221,0.2); }
+body.light-mode #squad-snapshot-inner tbody tr { border-bottom-color: rgba(170,221,221,0.07); }
+
+body.light-mode #wtd-goals-panel .goals-field-label,
+body.light-mode #wtd-goals-panel .goals-field-sub,
+body.light-mode #wtd-goals-panel .goals-field-input { color: #F5F5F7; }
+
+  #panel-assists .assists-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--border);
+  }
+  #panel-assists .stat-card { padding: 18px 28px; border-right: 1px solid var(--border); }
+  #panel-assists .stat-card:last-child { border-right: none; }
+  #panel-assists .stat-label {
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--cyan-dark); margin-bottom: 6px;
+  }
+  #panel-assists .stat-value {
+    font-size: 36px; font-weight: 700; letter-spacing: -1px;
+    color: var(--off-white); line-height: 1;
+  }
+  #panel-assists .stat-sub {
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 10px; color: var(--text-muted); margin-top: 4px;
+  }
+  #panel-assists .assists-filter-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 36px; border-bottom: 1px solid var(--border); flex-wrap: wrap;
+  }
+  #panel-assists .filter-label {
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--cyan-dark);
+  }
+  #panel-assists .search-wrap { margin-left: auto; position: relative; }
+  #panel-assists .search-wrap input {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: var(--off-white); padding: 7px 14px 7px 32px;
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 10px; width: 210px; outline: none;
+  }
+  #panel-assists .search-wrap input:focus { border-color: var(--cyan-light); }
+  #panel-assists .search-wrap input::placeholder { color: rgba(248,249,249,0.25); }
+  #panel-assists .search-icon {
+    position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted); font-size: 13px; pointer-events: none;
+  }
+  #assists-table { width: 100%; border-collapse: collapse; }
+  #assists-table thead tr { border-bottom: 1px solid var(--border); }
+  #assists-table th {
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--cyan-dark); padding: 14px 12px;
+    text-align: left; white-space: nowrap; cursor: pointer; user-select: none;
+  }
+  #assists-table th:hover { color: var(--cyan-light); }
+  #assists-table th.sorted .sa { opacity: 1; color: var(--cyan-light); }
+  #assists-table th .sa { margin-left: 4px; opacity: .4; }
+  #assists-table td { padding: 14px 12px; color: var(--off-white); font-size: 14px; white-space: nowrap; }
+  #assists-table tbody tr { border-bottom: 1px solid rgba(170,221,221,0.07); animation: rowIn .22s ease both; }
+  #assists-table tbody tr:hover { background: var(--row-hover); cursor: pointer; }
+  .assists-bar-wrap { display: flex; align-items: center; gap: 10px; }
+  .assists-bar-track {
+    width: 120px; height: 4px;
+    background: rgba(255,255,255,0.08); border-radius: 2px;
+    position: relative; flex-shrink: 0;
+  }
+  .assists-bar-fill {
+    position: absolute; left: 0; top: 0; height: 4px;
+    border-radius: 2px; background: var(--cyan-light);
+  }
+  .assists-count-val {
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 15px; font-weight: 700; color: var(--cyan-light); min-width: 28px; text-align: right;
+  }
+  #assists-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65); z-index: 500;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  #assists-modal-overlay.open { display: flex; }
+  #assists-modal {
+    background: #1a1718; border: 1px solid rgba(170,221,221,0.2);
+    width: 420px; max-width: 100%; max-height: 80vh;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .am-header {
+    padding: 24px 28px 18px; border-bottom: 1px solid rgba(170,221,221,0.12); flex-shrink: 0;
+  }
+  .am-sup {
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--cyan-dark); margin-bottom: 8px;
+  }
+  .am-name { font-size: 22px; font-weight: 700; color: var(--off-white); letter-spacing: -0.3px; }
+  .am-count-line {
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-muted); margin-top: 6px;
+  }
+  .am-count-line span { color: var(--cyan-light); font-weight: 700; }
+  .am-list { overflow-y: auto; padding: 16px 28px 20px; flex: 1; }
+  .am-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid rgba(170,221,221,0.07);
+    animation: rowIn .18s ease both;
+  }
+  .am-row:last-child { border-bottom: none; }
+  .am-row-num {
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 10px; letter-spacing: 1px; color: var(--text-muted); min-width: 26px;
+  }
+  .am-row-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--off-white); }
+  .am-close-btn {
+    display: block; width: 100%; padding: 13px 28px;
+    background: transparent; border: none; border-top: 1px solid rgba(170,221,221,0.12);
+    color: var(--text-muted);
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: 9px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+    cursor: pointer; text-align: center; transition: color .15s, background .15s; flex-shrink: 0;
+  }
+  .am-close-btn:hover { color: var(--off-white); background: rgba(170,221,221,0.05); }
+</style>
+
+<!-- Stats bar -->
+<div class="assists-stats">
+  <div class="stat-card">
+    <div class="stat-label">Total Assists</div>
+    <div class="stat-value" id="assists-stat-total">—</div>
+    <div class="stat-sub">from install list</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Assisters</div>
+    <div class="stat-value" id="assists-stat-reps">—</div>
+    <div class="stat-sub">reps with assists</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Top Assister</div>
+    <div class="stat-value" id="assists-stat-top-name" style="font-size:20px;letter-spacing:-0.5px;line-height:1.2">—</div>
+    <div class="stat-sub" id="assists-stat-top-count"></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg per Assister</div>
+    <div class="stat-value" id="assists-stat-avg">—</div>
+    <div class="stat-sub">assists</div>
+  </div>
+</div>
+
+<!-- Filter bar -->
+<div class="assists-filter-bar">
+  <span class="filter-label">Assists</span>
+  <div class="search-wrap">
+    <span class="search-icon">&#9906;</span>
+    <input type="text" id="assists-search" placeholder="Search rep name…" oninput="renderAssistsTab()">
+  </div>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <table id="assists-table">
+    <thead>
+      <tr>
+        <th style="width:48px" onclick="assistsSort('rank')"># <span class="sa">&#8597;</span></th>
+        <th onclick="assistsSort('name')">Rep Name <span class="sa">&#8597;</span></th>
+        <th onclick="assistsSort('metric')" style="width:70px">Type <span class="sa">&#8597;</span></th>
+        <th onclick="assistsSort('count')">Assists <span class="sa">&#8597;</span></th>
+        <th onclick="assistsSort('unique')">Unique CS Reps <span class="sa">&#8597;</span></th>
+      </tr>
+    </thead>
+    <tbody id="assists-tbody"></tbody>
+  </table>
+</div>
+
+<!-- Footer -->
+<div class="footer-bar">
+  <span class="footer-count" id="assists-footer-count"></span>
+  <span class="footer-brand">&#9632; XII &#8212; BUILDING CULTURE FORWARD &#9632;</span>
+</div>
+
+</div><!-- end panel-assists -->
+
+<!-- ── ASSISTS MODAL ──────────────────────────────────────────────────────── -->
+<div id="assists-modal-overlay" onclick="if(event.target===this)closeAssistsModal()">
+  <div id="assists-modal">
+    <div class="am-header">
+      <div class="am-sup">Assist Detail</div>
+      <div class="am-name" id="am-name">—</div>
+      <div class="am-count-line">Total assists: <span id="am-count">—</span></div>
+    </div>
+    <div class="am-list" id="am-list"></div>
+    <button class="am-close-btn" onclick="closeAssistsModal()">Close</button>
+  </div>
+</div>
+
+
+<script>
+
+
+// ── ASSISTS TAB LOGIC ─────────────────────────────────────────────────────────
+// buildAssistData() computes ASSIST_DATA live from INSTALL_LIST (Google Sheets).
+// Called at the top of renderAssistsTab() so data is always current.
+
+function buildAssistData() {
+  var byMetric = {};
+  INSTALL_LIST.forEach(function(r) {
+    var name   = (r['assist name']   || '').trim();
+    var metric = (r['metric']        || '').trim().toUpperCase();
+    var csRep  = (r['cs rep name']   || '').trim();
+    if (!name || !metric || (metric !== 'SRA' && metric !== 'IC')) return;
+    if (!byMetric[name]) byMetric[name] = {};
+    if (!byMetric[name][metric]) byMetric[name][metric] = [];
+    if (csRep) byMetric[name][metric].push(csRep);
+  });
+
+  // Compute halved counts and combined totals per rep
+  var repTotals = {};
+  Object.keys(byMetric).forEach(function(name) {
+    var total = 0;
+    Object.keys(byMetric[name]).forEach(function(metric) {
+      total += Math.ceil(byMetric[name][metric].length / 2);
+    });
+    repTotals[name] = total;
+  });
+
+  // Sort reps by combined total desc
+  var sortedNames = Object.keys(repTotals).sort(function(a, b) {
+    return repTotals[b] - repTotals[a];
+  });
+
+  // Build flat rows: SRA then IC per rep
+  var rows = [];
+  var rank = 1;
+  sortedNames.forEach(function(name) {
+    ['SRA', 'IC'].forEach(function(metric) {
+      var csReps = byMetric[name][metric];
+      if (!csReps || !csReps.length) return;
+      var count  = Math.ceil(csReps.length / 2);
+      var unique = (new Set(csReps)).size;
+      rows.push({
+        name: name, metric: metric, count: count,
+        unique: unique, cs_reps: csReps,
+        rep_total: repTotals[name], rank: rank
+      });
+    });
+    rank++;
+  });
+  return rows;
+}
+
+let _assistsSortKey = 'rank';
+let _assistsSortDir = 1;
+
+function assistsSort(key) {
+  if (_assistsSortKey === key) { _assistsSortDir *= -1; }
+  else { _assistsSortKey = key; _assistsSortDir = (key === 'name' || key === 'metric') ? 1 : -1; }
+  renderAssistsTab();
+}
+
+function renderAssistsTab() {
+  const ASSIST_DATA = buildAssistData();
+  const searchEl = document.getElementById('assists-search');
+  const search = searchEl ? searchEl.value.trim().toLowerCase() : '';
+
+  // Stats — unique reps only
+  const seen = new Set();
+  let totalAssists = 0, totalReps = 0, topName = '', topTotal = 0;
+  ASSIST_DATA.forEach(d => {
+    totalAssists += d.count;
+    if (!seen.has(d.name)) {
+      seen.add(d.name);
+      totalReps++;
+      if (d.rep_total > topTotal) { topTotal = d.rep_total; topName = d.name; }
+    }
+  });
+  const avg = totalReps ? Math.round(totalAssists / totalReps) : 0;
+
+  const el = id => document.getElementById(id);
+  if (el('assists-stat-total'))     el('assists-stat-total').textContent     = totalAssists;
+  if (el('assists-stat-reps'))      el('assists-stat-reps').textContent      = totalReps;
+  if (el('assists-stat-top-name'))  el('assists-stat-top-name').textContent  = topName || '—';
+  if (el('assists-stat-top-count')) el('assists-stat-top-count').textContent = topName ? topTotal + ' assists' : '';
+  if (el('assists-stat-avg'))       el('assists-stat-avg').textContent       = avg;
+
+  let data = ASSIST_DATA.slice();
+  if (search) data = data.filter(d => d.name.toLowerCase().includes(search));
+
+  data.sort((a, b) => {
+    const key = _assistsSortKey;
+    if (key === 'rank') {
+      // Primary: rank asc (already encodes combined total), secondary: SRA before IC
+      if (a.rank !== b.rank) return (a.rank - b.rank) * _assistsSortDir;
+      if (a.name !== b.name) return a.name < b.name ? -_assistsSortDir : _assistsSortDir;
+      return a.metric === 'SRA' ? -1 : 1;
+    }
+    let va = a[key], vb = b[key];
+    if (typeof va === 'string') va = va.toLowerCase();
+    if (typeof vb === 'string') vb = vb.toLowerCase();
+    if (va < vb) return -1 * _assistsSortDir;
+    if (va > vb) return  1 * _assistsSortDir;
+    // Tiebreak: preserve original grouped order
+    if (a.rank !== b.rank) return a.rank - b.rank;
+    return a.metric === 'SRA' ? -1 : 1;
+  });
+
+  document.querySelectorAll('#assists-table th').forEach(th => th.classList.remove('sorted'));
+  const keyIdx = {rank: 0, name: 1, metric: 2, count: 3, unique: 4};
+  const ths = document.querySelectorAll('#assists-table th');
+  if (ths[keyIdx[_assistsSortKey]]) ths[keyIdx[_assistsSortKey]].classList.add('sorted');
+
+  const maxCount = ASSIST_DATA.length ? Math.max(...ASSIST_DATA.map(d => d.count)) : 1;
+  const tbody = document.getElementById('assists-tbody');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+  data.forEach((d, i) => {
+    const pct = Math.round((d.count / maxCount) * 100);
+    const isSRA = d.metric === 'SRA';
+    const badgeColor = isSRA ? 'var(--r-l3)'              : 'var(--r-l1)';
+    const badgeBg    = isSRA ? 'rgba(90,158,160,0.10)'    : 'rgba(45,196,142,0.10)';
+    const badgeBdr   = isSRA ? 'rgba(90,158,160,0.35)'    : 'rgba(45,196,142,0.35)';
+    const tr = document.createElement('tr');
+    tr.style.animationDelay = Math.min(i * 0.008, 0.3) + 's';
+    tr.onclick = () => openAssistsModal(d);
+    tr.innerHTML =
+      '<td style="color:var(--text-muted);font-size:12px;font-family:Helvetica Neue,Helvetica,Arial,sans-serif">' + d.rank + '</td>' +
+      '<td style="font-weight:600;font-size:15px">' + d.name + '</td>' +
+      '<td><span style="display:inline-block;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border:1px solid ' + badgeBdr + ';color:' + badgeColor + ';background:' + badgeBg + '">' + d.metric + '</span></td>' +
+      '<td><div class="assists-bar-wrap">' +
+        '<div class="assists-bar-track"><div class="assists-bar-fill" style="width:' + pct + '%"></div></div>' +
+        '<span class="assists-count-val">' + d.count + '</span>' +
+      '</div></td>' +
+      '<td style="color:var(--text-muted);font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:13px">' + d.unique + '</td>';
+    tbody.appendChild(tr);
+  });
+
+  const uniqueReps = new Set(data.map(d => d.name)).size;
+  const fc = document.getElementById('assists-footer-count');
+  if (fc) fc.textContent = uniqueReps + ' rep' + (uniqueReps !== 1 ? 's' : '') + ' · ' + data.length + ' rows';
+}
+
+function openAssistsModal(d) {
+  const overlay = document.getElementById('assists-modal-overlay');
+  if (!overlay) return;
+  document.getElementById('am-name').textContent  = d.name;
+  document.getElementById('am-count').textContent = d.count + ' ' + d.metric + ' assists';
+
+  const listEl = document.getElementById('am-list');
+  listEl.innerHTML = '';
+  d.cs_reps.forEach(function(rep, i) {
+    const row = document.createElement('div');
+    row.className = 'am-row';
+    row.style.animationDelay = Math.min(i * 0.015, 0.4) + 's';
+    row.innerHTML = '<span class="am-row-num">' + (i + 1) + '</span><span class="am-row-name">' + rep + '</span>';
+    listEl.appendChild(row);
+  });
+  overlay.classList.add('open');
+}
+
+function closeAssistsModal() {
+  const overlay = document.getElementById('assists-modal-overlay');
+  if (overlay) overlay.classList.remove('open');
+}
+</script>
+
 
 
 <!-- ── WTD GOALS PANEL ─────────────────────────────────────────────────────── -->
