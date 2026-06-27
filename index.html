@@ -5849,17 +5849,33 @@ function ob_sendToRoster(id) {
   emp.status = 'Hired';
   if (emp._sheetRow) sheetsWriteCell('Onboarding', emp._sheetRow, OB_COL.status, 'Hired');
   const newRep = {
-    id:     emp.repId || ('ob_' + Date.now()),
-    name:   ob_cap(emp.name),
-    office: emp.office || '',
-    squad:  emp.squad  || '',
-    role:   'Sales Manager',
-    mobile: emp.mobile || '',
-    email:  emp.homeEmail || '',
-    status: 'Active'
+    id:        emp.repId || ('ob_' + Date.now()),
+    name:      ob_cap(emp.name),
+    role:      'Sales Manager',
+    office:    emp.office    || '',
+    squad:     emp.squad     || '',
+    pod:       '',
+    mobile:    emp.mobile    || '',
+    email:     emp.homeEmail || '',
+    address:   emp.address   || '',
+    recruiter: emp.referral  || '',
+    status:    'Active'
   };
   ROSTER_EMPLOYEES.unshift(newRep);
-  var rosterRow = [newRep.id, newRep.name, newRep.role, newRep.office, newRep.squad, newRep.mobile, newRep.email, ''];
+  // Roster sheet columns: Employee ID, Name, Role, Office, Squad, Pod, Mobile, Email, Address, Recruiter, Training_Room
+  var rosterRow = [
+    newRep.id,
+    newRep.name,
+    newRep.role,
+    newRep.office,
+    newRep.squad,
+    newRep.pod,
+    newRep.mobile,
+    newRep.email,
+    newRep.address,
+    newRep.recruiter,
+    ''  // Training_Room — not available in Onboarding data
+  ];
   sheetsAppendRow('Roster', rosterRow).then(function(ok) {
     if (ok) showSyncBanner('✓ ' + newRep.name + ' added to Roster');
   });
@@ -7422,7 +7438,7 @@ function sheetsBool(v) {
 }
 
 function rosterRowToEmployee(r) {
-  // Sheet headers: Employee ID, Name, Role, Office, Squad, Status, Mobile, Email, Address, Pod
+  // Sheet headers: Employee ID, Name, Role, Office, Squad, Pod, Mobile, Email, Address, Recruiter, Training_Room
   return {
     id:        String(r['employee id'] || r['rep id'] || r['id'] || ''),
     _sheetRow: r._sheetRow || null,
@@ -7433,6 +7449,7 @@ function rosterRowToEmployee(r) {
     mobile:    String(r['mobile'] || r['phone'] || ''),
     email:     String(r['email'] || ''),
     pod:       String(r['pod'] || ''),
+    recruiter: String(r['recruiter'] || ''),
   };
 }
 
@@ -7728,8 +7745,13 @@ async function fetchSheetsData(opts) {
     sheetsRowsToObjects((await stRes.json()).values || []).forEach(function(r) {
       var id = String(r['employee id'] || '').trim();
       if (!id || !/^\d+$/.test(id)) return;
-      var pts = csvNum(r['current_points']); var star = String(r['stars']||'');
-      if (!stMap[id] || pts > (stMap[id].rec_points||0)) stMap[id] = { id, rec_points: pts, rec_stars: star };
+      if (!stMap[id]) stMap[id] = { id, rec_points: null, rec_stars: '' };
+      // CURRENT_POINTS appears on the first row for each rep
+      var pts = csvNum(r['current points'] || r['current_points'] || '');
+      if (pts && stMap[id].rec_points === null) stMap[id].rec_points = pts;
+      // Current Star appears on the last row for each rep
+      var star = String(r['current star'] || '').trim();
+      if (star) stMap[id].rec_stars = star;
     });
     Object.keys(stMap).forEach(function(id) { var qtd = QTD_MAP[id]; if (qtd) { qtd.rec_points = stMap[id].rec_points; qtd.rec_stars = stMap[id].rec_stars; } });
   } catch(e) { errors.push('Stars: ' + e.message); }
@@ -8034,6 +8056,10 @@ function openRepModal(repId) {
         <div class="rm-info-val">${email}</div>
         <div class="rm-info-lbl">Email</div>
       </div>
+      ${roster.recruiter ? `<div class="rm-info-item">
+        <div class="rm-info-val">${roster.recruiter}</div>
+        <div class="rm-info-lbl">Recruiter</div>
+      </div>` : ''}
     </div>
 
     <div class="rm-section">
